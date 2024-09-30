@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FirstFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/button_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/next"
+            app:layout_constraintBottom_toTopOf="@id/button_wrapper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/button_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_first">
+
+            <CheckBox
+                android:id="@+id/checkboxInitialScreenHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setInitialScreenHeading" />
+
+            <CheckBox
+                android:id="@+id/checkboxInitialScreenSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setInitialScreenSubHeading" />
+
+            <CheckBox
+                android:id="@+id/checkboxFinalScreenHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setFinalScreenHeading" />
+
+            <CheckBox
+                android:id="@+id/checkboxFinalScreenSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setFinalScreenSubHeading" />
+
+            <CheckBox
+                android:id="@+id/checkboxTutorialText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom tutorial text" />
+
+            <CheckBox
+                android:id="@+id/checkboxTutorialDrawables"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom tutorial drawables" />
+
+            <CheckBox
+                android:id="@+id/checkboxTutorialOverwrite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="Tutorial steps overwrite" />
+
+            <Button
+                android:id="@+id/button_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/start" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
