@@ -10,7 +10,7 @@ implementation("com.ourcart:receiptscanner:0.0.3")
 Add in settings.gradle.kts new maven repository:
 ```agsl
 maven {
-  url = uri("s3://private-maven.ourcart.com/release" )
+  url = uri("s3://public-maven.ourcart.com/release" )
   credentials(AwsCredentials::class) {
     accessKey = "<provided by ourcart>"
     secretKey ="<provided by ourcart>"
