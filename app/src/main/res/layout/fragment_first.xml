@@ -57,6 +57,24 @@
                 android:text="setFinalScreenSubHeading" />
 
             <CheckBox
+                android:id="@+id/checkboxFinalScreenManualReviewHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setFinalScreenManualReviewHeading" />
+
+            <CheckBox
+                android:id="@+id/checkboxFinalScreenManualReviewSubHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setFinalScreenManualReviewSubHeading" />
+
+            <CheckBox
+                android:id="@+id/checkboxWaitForRequestResponse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="setWaitForRequestResponse" />
+
+            <CheckBox
                 android:id="@+id/checkboxTutorialText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

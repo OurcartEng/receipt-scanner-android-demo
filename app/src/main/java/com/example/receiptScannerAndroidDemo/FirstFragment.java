@@ -47,6 +47,10 @@ public class FirstFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+        receiptScanner.setDoneListener(() -> {
+            Log.i(TAG, "Done Clicked");
+            receiptScanner.reset();
+        });
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -63,28 +67,45 @@ public class FirstFragment extends Fragment {
 
 
         binding.checkboxInitialScreenHeading.setOnCheckedChangeListener((v, b) -> {
-            toggleSelectedCheckbox((CheckBox) v, b);
+            toggleSelectedCheckbox(v, b);
             receiptScanner.setInitialScreenHeading(b ? "Test initial heading test" : null);
         });
 
         binding.checkboxInitialScreenSubHeading.setOnCheckedChangeListener((v, b) -> {
-            toggleSelectedCheckbox((CheckBox) v, b);
+            toggleSelectedCheckbox(v, b);
             receiptScanner.setInitialScreenSubHeading(b ? "Test initial sub heading test\nnew lines are rendered" : null);
         });
 
         binding.checkboxFinalScreenHeading.setOnCheckedChangeListener((v, b) -> {
-            toggleSelectedCheckbox((CheckBox) v, b);
-            receiptScanner.setInitialScreenHeading(b ? "Test final heading test" : null);
+            toggleSelectedCheckbox(v, b);
+            receiptScanner.setFinalScreenHeading(b ? "Test final heading test" : null);
         });
 
         binding.checkboxFinalScreenSubHeading.setOnCheckedChangeListener((v, b) -> {
-            toggleSelectedCheckbox((CheckBox) v, b);
-            receiptScanner.setInitialScreenSubHeading(b ? "Test final sub heading test\nnew lines are rendered" : null);
+            toggleSelectedCheckbox(v, b);
+            receiptScanner.setFinalScreenSubHeading(b ? "Test final sub heading test\nnew lines are rendered" : null);
+        });
+
+        binding.checkboxFinalScreenManualReviewHeading.setOnCheckedChangeListener((v, b) -> {
+            toggleSelectedCheckbox(v, b);
+            receiptScanner.setFinalScreenManualReviewHeading(b ? "Custom header" : null);
+        });
+
+        binding.checkboxFinalScreenManualReviewSubHeading.setOnCheckedChangeListener((v, b) -> {
+            toggleSelectedCheckbox(v, b);
+            receiptScanner.setFinalScreenManualReviewSubHeading(b ? "Your receipt has been send to <b>manual review</b>" : null);
+        });
+
+        binding.checkboxWaitForRequestResponse.setChecked(true);
+        toggleSelectedCheckbox(binding.checkboxWaitForRequestResponse, true);
+        binding.checkboxWaitForRequestResponse.setOnCheckedChangeListener((v, b) -> {
+            toggleSelectedCheckbox(v, b);
+            receiptScanner.setWaitForRequestResponse(b);
         });
 
         binding.checkboxTutorialText.setOnCheckedChangeListener((v, b) -> {
             toggleTutorialOverwrite();
-            toggleSelectedCheckbox((CheckBox) v, b);
+            toggleSelectedCheckbox(v, b);
 
             receiptScanner.setTutorialStrings(
                     b ? new String[]{"Step 1 text Overwrite", "Step 2 text Overwrite", "Step 3 text Overwrite", "Step 4 text Overwrite"} : null
@@ -93,7 +114,7 @@ public class FirstFragment extends Fragment {
 
         binding.checkboxTutorialDrawables.setOnCheckedChangeListener((v, b) -> {
             toggleTutorialOverwrite();
-            toggleSelectedCheckbox((CheckBox) v, b);
+            toggleSelectedCheckbox(v, b);
             Resources resources = getResources();
 
             receiptScanner.setTutorialDrawables(

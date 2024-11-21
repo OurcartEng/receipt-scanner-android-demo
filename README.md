@@ -241,14 +241,16 @@ receiptScanner.setCloseListener((Context context) -> {
 // react for user clicking done or x
 });
 ```
-- ### setS3Bucket (_optional_)
-  This is only relavant for some customers, dont use it if not instructed by ourcart
+- ### setWaitForRequestResponse (_optional_)
+  By default after user sends receipt there will be waiting time to check the result of transcription and present user with potential validation error. If you want to move user to the end screen without waiting for validation of receipt use this method to set flag to false. User will have manual review screen displayed.
 
   #### Arguments:
-  - **bucket name**  (_String_) - name of bucket provided by ourcart
+  - **wait flag**  (_boolean_) - name of bucket provided by ourcart  
+  default: true
+
     Example:
 ```java
-receiptScanner.setS3Bucket("new bucket name");
+receiptScanner.setWaitForRequestResponse(false);
 ```
 - ### setDoneListener (_optional_)
   This method allows you to lister to clicking at "Done" button at the end of flow, if no listener is set clicking at "Done" will reset the flow and displays initial view.
@@ -292,15 +294,24 @@ Lets set some random colors
 ... beautiful.
 
 ### Colors to customize:
-- **ourcartPrimaryColor** (default: `#92C91F`) - color of links, action buttons, and many ornaments, should be the main color of the company
-- **ourcartTextColor** (default: `#333333`) - color of almost all texts
-- **ourcartTextActionButtonColor** (default: `#ffffff`) - color of text on action buttons, override only if primaryColor is to light and white text will not be readable on it as a background
-- **ourcartBackgroundPrimaryColor** (default: `#F9F9F9`) - background of main app actions
-- **ourcartBackgroundSecondaryColor** (default: `#ffffff`) - action bars and modals
-- **ourcartTileButtonBackgroundColor** (default: `#ffffff`) - background of tile buttons at the first view (ping in the example)
-- **ourcartTileButtonTextColor** (default: `ourcartTextColor`) - change only if you dont want it to be "text color", color of text at the "tile buttons"
-- **ourcartTileButtonIconColor** (default: `ourcartPrimaryColor`) - change only if you dont want it to be "primary color", color of icon at the "tile buttons"
-- **ourcartLinkColor** (default: `ourcartPrimaryColor`) - change only if you dont want it to be "primary color", color of clicable text like "Tutorial", "Retake", "Back", so actions that are not buttons
+- **Main colors**
+  - **ourcartPrimaryColor** (default: `#92C91F`) - color of links, action buttons, and many ornaments, should be the main color of the company
+  - **ourcartTextColor** (default: `#333333`) - color of almost all texts
+  - **ourcartBackgroundPrimaryColor** (default: `#F9F9F9`) - background of main app actions
+  - **ourcartBackgroundSecondaryColor** (default: `#ffffff`) - action bars and modals
+  - **ourcartBackgroundSecondaryColor** (default: `#ffffff`) - action bars and modals
+- **Primary button** - buttons: Crop, Done, Continue to Upload, Next, Submit
+  - **ourcartActionButtonBackgroundColor** (default: `ourcartPrimaryColor`) - background of tile buttons at the first view (ping in the example)
+  - **ourcartActionButtonTextColor** (default: `#ffffff`) - change only if you dont want it to be "text color", color of text at the "tile buttons"
+  - **ourcartActionButtonIconColor** (default: `#ffffff`) - change only if you dont want it to be "primary color", color of icon at the "tile buttons"
+- **Link button** - Link buttons: Tutorial, Retake, Retake All, I’ll upload later
+  - **ourcartActionTextBackgroundColor** (default: `#00000000`) - background of tile buttons at the first view (ping in the example)
+  - **ourcartActionTextTextColor** (default: `ourcartPrimaryColor`) - change only if you dont want it to be "text color", color of text at the "tile buttons"
+  - **ourcartActionTextIconColor** (default: `ourcartPrimaryColor`) - change only if you dont want it to be "primary color", color of icon at the "tile buttons"
+- **Tile button** - two buttons on initial screen: Upload Receipt, Snap a Receipt
+  - **ourcartTileButtonBackgroundColor** (default: `#ffffff`) - background of tile buttons at the first view (ping in the example)
+  - **ourcartTileButtonTextColor** (default: `ourcartTextColor`) - change only if you dont want it to be "text color", color of text at the "tile buttons"
+  - **ourcartTileButtonIconColor** (default: `ourcartPrimaryColor`) - change only if you dont want it to be "primary color", color of icon at the "tile buttons"
 
 ## Customization of font:
 Same as color you can overwrite font by adding “`ourcartFontFamily`” to styles, default font is `Poppins`.
@@ -310,4 +321,94 @@ Add to your styles
 ```xml
 <item name="ourcartFontFamily" type="font">@font/poppins</item>
 ```
+
+## Customization of text:
+Some texts can be set programmatically by methods **setInitialScreenHeading**, **setInitialScreenSubHeading**, **setFinalScreenHeading**, **setFinalScreenSubHeading**, **setFinalScreenManualReviewHeading**, **setFinalScreenManualReviewSubHeading** and **setTutorialStrings**. 
+Texts set in this way will have highest priority and will be take president over other ways.
+
+Aside from methods similarly to colors receipt scanner allows you to overwrite default texts. To do it go to file `strings.xml` and set new values. This is also a way to add translations or set texts that can be programmatically if they are static.
+
+Example:
+Add to your `strings.xml`
+```xml
+<string name="OURCART_AUTO_CAPTURE_ON">Auto-capture is on from no on</string>
+```
+
+All texts with default values in xml format:
+```xml
+<string name="OURCART_select_files">Select Files</string>
+<string name="OURCART_too_many_files">Maximum 6 files allowed</string>
+<string name="OURCART_too_big_file_size">Max allowed file size is 12MB</string>
+<string name="OURCART_adjust_angle">The angle is incorrect. Hold your camera directly above the receipt.</string>
+<string name="OURCART_FLAW_GENERIC">Some details couldn\'t be recognized. Please ensure the entire receipt is visible and clear.</string>
+<string name="OURCART_SENDING_ERROR">Something went wrong. Please try again later.</string>
+<string name="OURCART_PROCESSING_ERROR">Something went wrong. Please try again later.</string>
+<string name="OURCART_DIMENSION_RATIO_ERROR">The receipt is too long. Please click Retake, choose Long Receipt, zoom in, and capture it in up to 6 parts.</string>
+<string name="OURCART_looking_for_receipts">Looking for receipt...</string>
+<string name="OURCART_AUTO_MANUAL_ON">No receipt found.\n Capture manually.</string>
+<string name="OURCART_HOLD_STEADY">Hold your camera steady,\n we are capturing...</string>
+<string name="OURCART_AUTO_CAPTURE_ON">Auto-capture is on</string>
+<string name="OURCART_AUTO_CAPTURE_OFF">Auto-capture is off</string>
+<string name="OURCART_REGULAR_RECEIPT_MODE">Regular receipt mode</string>
+<string name="OURCART_LONG_RECEIPT_MODE">Long receipt mode</string>
+<string name="OURCART_upload_pick_text" formatted="false">If your receipt is digital, please make sure to <b>download it first</b> to your device, and then upload.</string>
+<string name="OURCART_upload_pick_upload">Continue to upload</string>
+<string name="OURCART_upload_pick_upload_later"><u>I\'ll upload later</u></string>
+<string name="OURCART_upload_pick_gallery">Gallery</string>
+<string name="OURCART_upload_pick_document">Document</string>
+<string name="OURCART_regular_receipt">Regular Receipt</string>
+<string name="OURCART_long_receipt">Long Receipt</string>
+<string name="OURCART_submit">Submit</string>
+<string name="OURCART_back"><u>Back</u></string>
+<string name="OURCART_retake"><u>Retake</u></string>
+<string name="OURCART_retake_all"><u>Retake all</u></string>
+<string name="OURCART_close">Close</string>
+<string name="OURCART_crop">Crop</string>
+<string name="OURCART_next">Next</string>
+<string name="OURCART_done">Done</string>
+<string name="OURCART_upload_receipt">Upload Receipt</string>
+<string name="OURCART_snap_receipt">Snap a Receipt</string>
+<string name="OURCART_init_page_bottom">For more info open</string>
+<string name="OURCART_tutorial"><u>Tutorial</u></string>
+<string name="OURCART_initial_screen_heading">Receipt upload</string>
+<string name="OURCART_initial_screen_sub_heading" formatted="false">Snap your paper <b>receipt or upload</b> \ndigital receipt file.</string>
+<string name="OURCART_final_screen_heading">Upload complete</string>
+<string name="OURCART_final_screen_sub_heading">You\'ll be notified once your\nreceipt is verified.</string>
+<string name="OURCART_final_screen_manual_review_heading">Upload complete</string>
+<string name="OURCART_final_screen_manual_review_sub_heading" formatted="false">We couldn\'t process your\n receipt automatically.\nIt will now go to <b>manual review,\n</b> which may take <b>up to 48 hours.</b></string>
+<string name="OURCART_tutorial_1" formatted="false">The image should be \nclearly readable and \n<b>include all the information</b> \non the receipt.</string>
+<string name="OURCART_tutorial_2" formatted="false">Snap with <b>minimal \nbackground</b>, align receipt \nborders to the camera frame.</string>
+<string name="OURCART_tutorial_3" formatted="false">Snap a clear picture in \n<b>good lighting</b>. Make sure it is\n not blurry or dark</string>
+<string name="OURCART_tutorial_4" formatted="false">The receipt should be clear\n and <b>free of wrinkles</b>.</string>
+<string name="OURCART_tutorial_5" formatted="false">Please <b>do not write</b> \non the receipt.</string>
+<string name="OURCART_tutorial_6" formatted="false">We support common \n<b>image formats:</b> \nPDF, JPG, JPEG, PNG, GIF.</string>
+<string name="OURCART_tutorial_7" formatted="false">If your receipt is digital,\n please make sure to\n <b>download it first</b> to your\n device, and then upload.</string>
+```
+
+#### In the text there are tags similar to html ones:
+- `<b>` - make the text bold, also add attribute to string `formatted="false"` may not work without it
+- `<u>` - add underline to text
+
+### Placement of most  the texts:
+![readme_1](https://s3.amazonaws.com/ourcart.platform.assets/images/readme1.jpg)
+![readme_2](https://s3.amazonaws.com/ourcart.platform.assets/images/readme1_1.jpg)
+![readme_3](https://s3.amazonaws.com/ourcart.platform.assets/images/readme2.jpg)
+![readme_4](https://s3.amazonaws.com/ourcart.platform.assets/images/readme3.jpg)
+![readme_5](https://s3.amazonaws.com/ourcart.platform.assets/images/readme4.jpg)
+![readme_6](https://s3.amazonaws.com/ourcart.platform.assets/images/readme5.jpg)
+![readme_7](https://s3.amazonaws.com/ourcart.platform.assets/images/readme6.jpg)
+![readme_8](https://s3.amazonaws.com/ourcart.platform.assets/images/readme7.jpg)
+![readme_9](https://s3.amazonaws.com/ourcart.platform.assets/images/readme8.jpg)
+![readme_10](https://s3.amazonaws.com/ourcart.platform.assets/images/readme9.jpg)
+![readme_11](https://s3.amazonaws.com/ourcart.platform.assets/images/readme10.jpg)
+![readme_12](https://s3.amazonaws.com/ourcart.platform.assets/images/readme11.jpg)
+![readme_13](https://s3.amazonaws.com/ourcart.platform.assets/images/readme12.jpg)
+![readme_14](https://s3.amazonaws.com/ourcart.platform.assets/images/readme13.jpg)
+![readme_14](https://s3.amazonaws.com/ourcart.platform.assets/images/readme14.jpg)
+
+
+
+
+
+
 
