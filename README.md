@@ -241,7 +241,7 @@ receiptScanner.setCloseListener((Context context) -> {
 // react for user clicking done or x
 });
 ```
-- ### setWaitForRequestResponse (_optional_)
+- ### setPreValidation (_optional_)
   By default after user sends receipt there will be waiting time to check the result of transcription and present user with potential validation error. If you want to move user to the end screen without waiting for validation of receipt use this method to set flag to false. User will have manual review screen displayed.
 
   #### Arguments:
@@ -250,7 +250,7 @@ receiptScanner.setCloseListener((Context context) -> {
 
     Example:
 ```java
-receiptScanner.setWaitForRequestResponse(false);
+receiptScanner.setPreValidation(false);
 ```
 - ### setDoneListener (_optional_)
   This method allows you to lister to clicking at "Done" button at the end of flow, if no listener is set clicking at "Done" will reset the flow and displays initial view.
