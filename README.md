@@ -299,9 +299,8 @@ Lets set some random colors
   - **ourcartTextColor** (default: `#333333`) - color of almost all texts
   - **ourcartBackgroundPrimaryColor** (default: `#F9F9F9`) - background of main app actions
   - **ourcartBackgroundSecondaryColor** (default: `#ffffff`) - action bars and modals
-  - **ourcartBackgroundSecondaryColor** (default: `#ffffff`) - action bars and modals
 - **Primary button** - buttons: Crop, Done, Continue to Upload, Next, Submit
-  - **ourcartActionButtonBackgroundColor** (default: `ourcartPrimaryColor`) - background of tile buttons at the first view (ping in the example)
+  - **ourcartActionButtonBackgroundColor** (default: `ourcartPrimaryColor`) - background of tile buttons at the first view (pink buttons in the example above)
   - **ourcartActionButtonTextColor** (default: `#ffffff`) - change only if you dont want it to be "text color", color of text at the "tile buttons"
   - **ourcartActionButtonIconColor** (default: `#ffffff`) - change only if you dont want it to be "primary color", color of icon at the "tile buttons"
 - **Link button** - Link buttons: Tutorial, Retake, Retake All, I’ll upload later
@@ -389,7 +388,7 @@ All texts with default values in xml format:
 - `<b>` - make the text bold, also add attribute to string `formatted="false"` may not work without it
 - `<u>` - add underline to text
 
-### Placement of most  the texts:
+### Placement of most texts:
 ![readme_1](https://s3.amazonaws.com/ourcart.platform.assets/images/readme1.jpg)
 ![readme_2](https://s3.amazonaws.com/ourcart.platform.assets/images/readme1_1.jpg)
 ![readme_3](https://s3.amazonaws.com/ourcart.platform.assets/images/readme2.jpg)
@@ -406,9 +405,15 @@ All texts with default values in xml format:
 ![readme_14](https://s3.amazonaws.com/ourcart.platform.assets/images/readme13.jpg)
 ![readme_14](https://s3.amazonaws.com/ourcart.platform.assets/images/readme14.jpg)
 
-
-
-
-
-
-
+### Explanation of some texts:
+ - `OURCART_too_many_files` (default: "Maximum 6 files allowed") - displayed when user pick more then 6 files from the device
+ - `OURCART_too_big_file_size` (default: "Max allowed file size is 12MB") - displayed when user selected a file larger then 12 MB
+ - `OURCART_FLAW_GENERIC` (default: "Some details couldn\'t be recognized. Please ensure the entire receipt is visible and clear") - error displayed if prevalidation returns any flaws in receipt
+ - `OURCART_SENDING_ERROR` (default: "Something went wrong. Please try again later.") - error displayed if any problem occurred during prevalidation requests
+ - `OURCART_PROCESSING_ERROR` (default: "Something went wrong. Please try again later.") - error displayed if any problem occurred in HTTP request like HTTP 403 in case of potential scam
+ - `OURCART_DIMENSION_RATIO_ERROR` (default: "The receipt is too long. Please click Retake, choose Long Receipt, zoom in, and capture it in up to 6 parts.") - error displayed if result of cropping have ration of height to width over 6:1
+ - `OURCART_looking_for_receipts` (default: "Looking for receipt...") - message during scanning when no receipt is present
+ - `OURCART_AUTO_MANUAL_ON` (default: "No receipt found.\n Capture manually.") - during scanning for a receipt after 10s automatic capturing will be turn off and this message will be displayed
+ - `OURCART_HOLD_STEADY` (default: "Hold your camera steady,\n we are capturing...") - shortly displayed when during scanning automatic capturing is taking a picture
+ - `OURCART_AUTO_CAPTURE_ON` (default: "Auto-capture is on") - message during scanning when user manually switch mode to autocapture, photo will be taken automatically when receipt is found
+ - `OURCART_AUTO_CAPTURE_OFF` (default: "Auto-capture is off") - message during scanning when user manually switch mode to manual capture, photo will be taken only after clicking on a button in the middle at the bottom
