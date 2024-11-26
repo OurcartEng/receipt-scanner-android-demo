@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation("com.ourcart:receiptscanner:1.0.4")
+    implementation("com.ourcart:receiptscanner:1.0.5")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.navigation:navigation-fragment:2.6.0")
