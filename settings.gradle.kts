@@ -20,7 +20,7 @@ dependencyResolutionManagement {
             url = uri("s3://private-maven.ourcart.com/release" )
             credentials(AwsCredentials::class) {
                 accessKey = ""
-                secretKey = ""
+                secretKey =""
             }
         }
     }
