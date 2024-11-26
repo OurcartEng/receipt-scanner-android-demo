@@ -29,9 +29,9 @@ public class FirstFragment extends Fragment {
 
     private ReceiptScanner receiptScanner = new ReceiptScanner(
             false,
-            "<api key>",
+            "<api key>", // replace with api key
             "US",
-            "<client code>",
+            "<client code>", // replace with client code
             "cab123"
     )
             .setCloseListener(context -> {
@@ -100,7 +100,7 @@ public class FirstFragment extends Fragment {
         toggleSelectedCheckbox(binding.checkboxWaitForRequestResponse, true);
         binding.checkboxWaitForRequestResponse.setOnCheckedChangeListener((v, b) -> {
             toggleSelectedCheckbox(v, b);
-            receiptScanner.setWaitForRequestResponse(b);
+            receiptScanner.setPreValidation(b);
         });
 
         binding.checkboxTutorialText.setOnCheckedChangeListener((v, b) -> {
