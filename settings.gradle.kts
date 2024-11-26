@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url = uri("s3://private-maven.ourcart.com/release" )
+            url = uri("s3://public-maven.ourcart.com/release" )
             credentials(AwsCredentials::class) {
                 accessKey = ""
                 secretKey =""
