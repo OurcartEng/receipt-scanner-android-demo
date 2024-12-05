@@ -4,7 +4,7 @@
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.0.5")
+implementation("com.ourcart:receiptscanner:1.0.7")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -365,8 +365,8 @@ All texts with default values in xml format:
 <string name="OURCART_crop">Crop</string>
 <string name="OURCART_next">Next</string>
 <string name="OURCART_done">Done</string>
-<string name="OURCART_upload_receipt">Upload Receipt</string>
-<string name="OURCART_snap_receipt">Snap a Receipt</string>
+<string name="OURCART_upload_receipt">Upload\n Receipt</string>
+<string name="OURCART_snap_receipt">Snap a\n Receipt</string>
 <string name="OURCART_init_page_bottom">For more info open</string>
 <string name="OURCART_tutorial"><u>Tutorial</u></string>
 <string name="OURCART_initial_screen_heading">Receipt upload</string>
