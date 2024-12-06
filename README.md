@@ -314,7 +314,7 @@ Lets set some random colors
 
 ## Customization of font:
 Same as color you can overwrite font by adding “`ourcartFontFamily`” to styles, default font is `Poppins`.
-Make sure that font you picking is an `font-family` resource.
+Make sure that font you picking is an xml describing `font-family` resource.
 
 Example:  
 Add to your styles
@@ -322,7 +322,9 @@ Add to your styles
 <item name="ourcartFontFamily" type="font">@font/poppins</item>
 ```
 
-Example font file (`@font/poppins`)
+![readme_font](https://s3.us-east-1.amazonaws.com/ourcart.platform.assets/images/font_files.png)
+
+Example font file `@font/poppins` (`src/res/font/poppins.xml` use this file to overwrite font of sdk, of course name it differently appropriately to your font) 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <font-family xmlns:android="http://schemas.android.com/apk/res/android"
@@ -393,11 +395,14 @@ Example font file (`@font/poppins`)
       app:fontWeight="900" />
 </font-family>
 ```
-Those should be actual font files:
+Those should be actual font files (like `.ttf` and `.otf`) meant to be used for specific weight `android:fontWeight`:
 ```xml
-android:font="@font/poppins_extrabold"
-app:font="@font/poppins_extrabold"
+android:font="@font/poppins_extrabold" <!-- file "src/res/font/poppins_extrabold.ttf" -->
+app:font="@font/poppins_extrabold" <!-- file "src/res/font/poppins_extrabold.ttf" -->
 ```
+if you want just the "Bold" and "Normal" assign 
+- same file of normal weight for `android:fontWeight`: 100, 200, 300, 400, 500
+- same file of bold weight for `android:fontWeight`: 600, 700, 800, 900
 
 ## Customization of text:
 Some texts can be set programmatically by methods **setInitialScreenHeading**, **setInitialScreenSubHeading**, **setFinalScreenHeading**, **setFinalScreenSubHeading**, **setFinalScreenManualReviewHeading**, **setFinalScreenManualReviewSubHeading** and **setTutorialStrings**. 
