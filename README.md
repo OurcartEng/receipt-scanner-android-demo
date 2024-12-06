@@ -324,7 +324,7 @@ Add to your styles
 
 ![readme_font](https://s3.us-east-1.amazonaws.com/ourcart.platform.assets/images/font_files.png)
 
-Example font file `@font/poppins` (`src/res/font/poppins.xml` use this file to overwrite font of sdk, of course name it differently appropriately to your font) 
+Example font file `@font/poppins` (`src/res/font/poppins.xml` use this file to overwrite font of sdk, of course name it differently appropriately to your font): 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <font-family xmlns:android="http://schemas.android.com/apk/res/android"
