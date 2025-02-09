@@ -26,4 +26,4 @@ android.enableJetifier=true
 
 [Full flow scanner documentation for entire flow and full ui](FULL_FLOW_README.md)
 
-[Custom scanner documentation for separate methods and only receipt scanner ui](FULL_FLOW_README.md)
+[Custom scanner documentation for separate methods and only receipt scanner ui](CUSTOM_SCANNER_README.md)
