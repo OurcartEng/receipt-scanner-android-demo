@@ -122,31 +122,44 @@ public class ScannerPreviewFragment extends Fragment {
             }
         });
 
+        ValidationResultsFragment newFragment = new ValidationResultsFragment();
         binding.validateBtn.setOnClickListener(v -> {
-            ValidationResultsFragment newFragment = new ValidationResultsFragment();
             if (pdfUri != null) {
                 try {
-                    newFragment.setValidationResult(ReceiptScanner.validateReceipt(getContext(), pdfUri));
+                    v.setEnabled(false);
+                    ReceiptScanner.validateReceipt(getContext(), pdfUri)
+                            .thenAccept((results) -> {
+                                newFragment.setValidationResult(results);
+                                newFragment.show(getActivity().getSupportFragmentManager(), "validate");
+                                v.setEnabled(true);
+                            });
                 } catch (FileService.FileTypeException e) {
                     throw new RuntimeException(e);
                 } catch (FileService.FileSizeException e) {
                     throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
             if (!bitmaps.isEmpty()) {
-                newFragment.setValidationResult(ReceiptScanner.validateReceipt(bitmaps));
+                v.setEnabled(false);
+                ReceiptScanner.validateReceipt(bitmaps)
+                        .thenAccept((results) -> {
+                            newFragment.setValidationResult(results);
+                            newFragment.show(getActivity().getSupportFragmentManager(), "validate");
+                            v.setEnabled(true);
+                        });
             }
-            newFragment.show(getActivity().getSupportFragmentManager(), "validate");
         });
 
-        binding.sendBtn.setOnClickListener(v -> {
-            ReceiptScanner.ApiConfig apiConfig = new ReceiptScanner.ApiConfig();
-            apiConfig.isProd = false;
-            apiConfig.apiKey = Config.API_KEY;
-            apiConfig.clientCountry = Config.COUNTRY_CODE;
-            apiConfig.clientCode = Config.CLIENT_CODE;
-            apiConfig.clientUserId = Config.CLIENT_USER_ID;
+        ReceiptScanner.ApiConfig apiConfig = new ReceiptScanner.ApiConfig();
+        apiConfig.isProd = false;
+        apiConfig.apiKey = Config.API_KEY;
+        apiConfig.clientCountry = Config.COUNTRY_CODE;
+        apiConfig.clientCode = Config.CLIENT_CODE;
+        apiConfig.clientUserId = Config.CLIENT_USER_ID;
 
+        binding.sendBtn.setOnClickListener(v -> {
             if (pdfUri != null) {
                 v.setEnabled(false);
                 try {
@@ -156,7 +169,6 @@ public class ScannerPreviewFragment extends Fragment {
                             v.setEnabled(true);
                         });
                     }).exceptionally((e) -> {
-
                         getActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                             v.setEnabled(true);
@@ -190,6 +202,7 @@ public class ScannerPreviewFragment extends Fragment {
     }
 
     private void updateView() {
+        binding.previewScroll.removeAllViews();
         if (pdfUri != null) {
             binding.findCropPointsBtn.setEnabled(false);
             binding.optionContainer.setVisibility(View.VISIBLE);
