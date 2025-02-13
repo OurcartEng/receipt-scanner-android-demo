@@ -4,7 +4,7 @@
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.1.13")
+implementation("com.ourcart:receiptscanner:1.1.18")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -104,10 +104,11 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
 
 - ### ReceiptScanner.getEdgePointsData
   Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are edges of the receipt in order: top-left, top-right, bottom-left, bottom-right/
-  If no receipt waS detected the points will be on the corners of bitmap.
+  If no receipt was detected the points will be on the corners of bitmap.
 
   #### Arguments:
   - **bitmaps** (_List&lt;Bitmap>_)
+  - **withCroppedBitmaps** (_List&lt;boolean>_)(_Optional_) - if set to true `EdgeData` will contain an already cropped bitmap in `croppedBitmap`
 
 ## ApiConfig documentation
 `ApiConfig` instance of this class must me provided to send files to ourcart, all fields must me set:
@@ -137,8 +138,17 @@ id of client to be sended and associated with receipts, it can be any string but
 ### **isRetakeMode** (_boolean_)
 Set to `true` if you wan scanner to be in "Retake mode", it is for retaking one picture without automatic capturing and ability to change the mode to "long receipt".
 After taking one picture activity will be finished and `onReceiptSnapped` will be executed.
-### **isLongMode** (_isLongMode_)
+### **isLongMode** (_boolean_)
 Should scanner be in "`Long receipt mode`" by default.
+
+### **capturingDuration** (_int_)
+Time in  of milliseconds before image will be capture when valid receipt have been detected during automatic mode
+### **enableAutomaticMode** (_boolean_)
+Should Automatic Mode be enabled for `Regular receipt mode`
+### **validateAngle** (_boolean_)
+Should angel be checked.
+
+
 ### **onHelpClick** (_(Context ctx) -> void_)
 Callback method executed by clicking on "help" icon in top right, gives access current context.
 ### **onCloseClicked** (_(Context ctx) -> void_)
@@ -152,6 +162,8 @@ Callback method executed when Clicking on "`Next`" button in "`Long receipt mode
 Should help icon be displayed
 ### **showTargetBorder** (_boolean_) (default: true)
 Should aiming help (suggested place the receipt should be in) be displayed
+### **targetBorderColor** (_Integer_) (default: #ffffff)
+Color of aiming help (suggested place the receipt should be in) be displayed
 ### **closeDrawable** (_Drawable_)
 Icon to be displayed instead of "Close" icon at top-left
 ### **torchOnDrawable** (_Drawable_)
@@ -247,6 +259,8 @@ Instance of of `EdgeData` are returned by getEdgePointsData.
 If no receipt was detected the points will be on the corners of bitmap.
 ### **bitmap** (_Bitmap_)
 Reference to bitmap that was analyzed
+### **croppedBitmap** (_Bitmap_)
+Bitmap already cropped to the points, must be specified that you want those or it will be null
 
 
 ## Customization of colors:
@@ -381,6 +395,7 @@ All texts with default values in xml format:
 <string name="OURCART_bad_lighting">Lighting is too low. Please move to a brighter area or turn on more lights.</string>
 <string name="OURCART_shake_detected">Camera shake detected. Please try to hold your device steadier or use support to stabilize your camera.</string>
 <string name="OURCART_looking_for_receipts">Looking for receipt...</string>
+<string name="OURCART_HOLD_STEADY">Hold your camera steady,\n we are capturing...</string>
 <string name="OURCART_AUTO_MANUAL_ON">No receipt found.\n Capture manually.</string>
 <string name="OURCART_AUTO_CAPTURE_ON">Auto-capture is on</string>
 <string name="OURCART_AUTO_CAPTURE_OFF">Auto-capture is off</string>

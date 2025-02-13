@@ -48,6 +48,10 @@ public class ScannerConfigFragment extends Fragment {
 
         setBooleanCheckbox(binding.showHelpIcon, ScannerActivity.uiSettings.showHelpIcon, (v, b) -> ScannerActivity.uiSettings.showHelpIcon = b);
         setBooleanCheckbox(binding.showTargetBorder, ScannerActivity.uiSettings.showTargetBorder, (v, b) -> ScannerActivity.uiSettings.showTargetBorder = b);
+        setBooleanCheckbox(binding.isRetakeMode, ScannerActivity.scannerConfig.isRetakeMode, (v, b) -> ScannerActivity.scannerConfig.isRetakeMode = b);
+        setBooleanCheckbox(binding.isLongMode, ScannerActivity.scannerConfig.isLongMode, (v, b) -> ScannerActivity.scannerConfig.isLongMode = b);
+        setBooleanCheckbox(binding.enableAutomaticMode, ScannerActivity.scannerConfig.enableAutomaticMode, (v, b) -> ScannerActivity.scannerConfig.enableAutomaticMode = b);
+        setBooleanCheckbox(binding.validateAngle, ScannerActivity.scannerConfig.validateAngle, (v, b) -> ScannerActivity.scannerConfig.validateAngle = b);
 
         Drawable smileyIcon = getResources().getDrawable(R.drawable.smiley_icon);
         setDrawableCheckbox(binding.closeDrawable, ScannerActivity.uiSettings.closeDrawable, (v, b) -> ScannerActivity.uiSettings.closeDrawable = (b ? smileyIcon : null));
@@ -69,7 +73,7 @@ public class ScannerConfigFragment extends Fragment {
         setFontSizeInput(binding.nextBtnFontSize, ScannerActivity.uiSettings.nextBtnFontSize, 16, val -> ScannerActivity.uiSettings.nextBtnFontSize = val);
         setFontSizeInput(binding.imageCounterFontSize, ScannerActivity.uiSettings.imageCounterFontSize, 14, val -> ScannerActivity.uiSettings.imageCounterFontSize = val);
         setFontSizeInput(binding.feedbackFontSize, ScannerActivity.uiSettings.feedbackFontSize, 14, val -> ScannerActivity.uiSettings.feedbackFontSize = val);
-
+        setFontSizeInput(binding.capturingDuration, ScannerActivity.scannerConfig.capturingDuration, 2000, val -> ScannerActivity.scannerConfig.capturingDuration = val);
 
         int primaryColor = getResources().getColor(R.color.ourcartPrimaryColor);
         int textColor = getResources().getColor(R.color.ourcartTextColor);
@@ -78,6 +82,10 @@ public class ScannerConfigFragment extends Fragment {
         int automaticCaptureSnapBtnBackgroundColor = getResources().getColor(R.color.ourcartScannerAutomaticCaptureSnapBtnBackgroundColor);
         int manualCaptureSnapBtnBackgroundColor = getResources().getColor(R.color.ourcartScannerManualCaptureSnapBtnBackgroundColor);
 
+        setColorPicker(binding.targetBorderColor, ScannerActivity.uiSettings.targetBorderColor, whiteColor, (color, colorHex) -> {
+            ScannerActivity.uiSettings.targetBorderColor = color;
+            binding.targetBorderColor.setBackgroundColor(color);
+        });
         setColorPicker(binding.modeBtnActiveBackgroundColor, ScannerActivity.uiSettings.modeBtnActiveBackgroundColor, primaryColor, (color, colorHex) -> {
             ScannerActivity.uiSettings.modeBtnActiveBackgroundColor = color;
             binding.modeBtnActiveBackgroundColor.setBackgroundColor(color);

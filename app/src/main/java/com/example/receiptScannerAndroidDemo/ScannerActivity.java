@@ -44,40 +44,42 @@ public class ScannerActivity extends AppCompatActivity {
     private NavController navController;
 
     public static ReceiptScanner.UISettings uiSettings = new ReceiptScanner.UISettings();
-    ReceiptScanner.ScannerConfig scannerConfig = new ReceiptScanner.ScannerConfig() {
-        @Override
-        public void onHelpClick(Context ctx) {
-            Log.e("TAG", "onHelpClick");
-
-            Toast.makeText(ScannerActivity.this,
-                    "onHelpClick",
-                    Toast.LENGTH_LONG).show();
-
-            Intent in = new Intent(ctx, ScannerActivity.class);
-            startActivity(in);
-        }
-
-        @Override
-        public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
-            ScannerPreviewFragment.pdfUri = null;
-            ScannerPreviewFragment.bitmaps = bitmaps;
-            Intent in = new Intent(ctx, ScannerActivity.class);
-            in.putExtra("preview", true);
-            startActivity(in);
-        }
-
-        @Override
-        public void onCloseClicked(Context ctx) {
-            Log.e("TAG", "onCloseClicked");
-
-            Intent in = new Intent(ctx, ScannerActivity.class);
-            startActivity(in);
-        }
-    };
+    public static ReceiptScanner.ScannerConfig scannerConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        scannerConfig = new ReceiptScanner.ScannerConfig() {
+            @Override
+            public void onHelpClick(Context ctx) {
+                Log.e("TAG", "onHelpClick");
+
+                Toast.makeText(ScannerActivity.this,
+                        "onHelpClick",
+                        Toast.LENGTH_LONG).show();
+
+                Intent in = new Intent(ctx, ScannerActivity.class);
+                startActivity(in);
+            }
+
+            @Override
+            public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
+                ScannerPreviewFragment.pdfUri = null;
+                ScannerPreviewFragment.bitmaps = bitmaps;
+                Intent in = new Intent(ctx, ScannerActivity.class);
+                in.putExtra("preview", true);
+                startActivity(in);
+            }
+
+            @Override
+            public void onCloseClicked(Context ctx) {
+                Log.e("TAG", "onCloseClicked");
+
+                Intent in = new Intent(ctx, ScannerActivity.class);
+                startActivity(in);
+            }
+        };
 
         setContentView(R.layout.activity_scanner_main);
 
