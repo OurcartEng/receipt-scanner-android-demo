@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.receiptScannerAndroidDemo.scanner.ScannerConfigFragment;
@@ -50,6 +51,11 @@ public class ScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.activity_scanner_main);
+
+        Button configBtn = findViewById(R.id.config_btn);
+        Button previewBtn = findViewById(R.id.preview_btn);
+
         scannerConfig = new ReceiptScanner.ScannerConfig() {
             @Override
             public void onHelpClick(Context ctx) {
@@ -81,14 +87,14 @@ public class ScannerActivity extends AppCompatActivity {
             }
         };
 
-        setContentView(R.layout.activity_scanner_main);
-
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);
         navController = navHostFragment.getNavController();
 
 
         if (getIntent().getBooleanExtra("preview", false)) {
+            configBtn.setEnabled(true);
+            previewBtn.setEnabled(false);
             navController.navigate(R.id.action_goto_PreviewFragment);
         }
 
@@ -97,7 +103,9 @@ public class ScannerActivity extends AppCompatActivity {
             startActivity(in);
         });
 
-        findViewById(R.id.config_btn).setOnClickListener(v -> {
+        configBtn.setOnClickListener(v -> {
+            configBtn.setEnabled(false);
+            previewBtn.setEnabled(true);
             navController.navigate(R.id.action_goto_ConfigFragment);
         });
 
@@ -105,7 +113,9 @@ public class ScannerActivity extends AppCompatActivity {
             ReceiptScanner.startScanner(ScannerActivity.this, uiSettings, scannerConfig);
         });
 
-        findViewById(R.id.preview_btn).setOnClickListener(v -> {
+        previewBtn.setOnClickListener(v -> {
+            configBtn.setEnabled(true);
+            previewBtn.setEnabled(false);
             navController.navigate(R.id.action_goto_PreviewFragment);
         });
 

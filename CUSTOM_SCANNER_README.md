@@ -4,7 +4,7 @@
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.1.18")
+implementation("com.ourcart:receiptscanner:1.2.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -109,6 +109,19 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
   #### Arguments:
   - **bitmaps** (_List&lt;Bitmap>_)
   - **withCroppedBitmaps** (_List&lt;boolean>_)(_Optional_) - if set to true `EdgeData` will contain an already cropped bitmap in `croppedBitmap`
+
+  - ### ReceiptScanner.cropBitmap
+    Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are edges of the receipt in order: top-left, top-right, bottom-left, bottom-right/
+    If no receipt was detected the points will be on the corners of bitmap.
+
+    #### Arguments:
+    - **bitmap** (_Bitmap_)
+    - **points** (_Map<Integer, PointF>_) - edges of the receipt in order edges of the receipt in order (like from `EdgeData`): 
+      - 1: top-left
+      - 2: top-right
+      - 3: bottom-left
+      - 4: bottom-right
+
 
 ## ApiConfig documentation
 `ApiConfig` instance of this class must me provided to send files to ourcart, all fields must me set:

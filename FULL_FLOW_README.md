@@ -4,7 +4,7 @@
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.1.13")
+implementation("com.ourcart:receiptscanner:1.2.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
