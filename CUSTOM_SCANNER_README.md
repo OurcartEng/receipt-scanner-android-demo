@@ -68,7 +68,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
   Starts scanner activity
   - #### Input:
     - **context** (_Context_) - current context
-    - **uiSettings** ([UISettings](#uisettingsdocumentation))(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
+    - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
     - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
   - #### Input:
     - void
