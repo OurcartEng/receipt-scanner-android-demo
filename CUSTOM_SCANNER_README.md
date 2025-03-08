@@ -71,7 +71,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
     - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
   - #### Input:
-    - [void](#receiptScannergetedgepointsdata)
+    - void
 
 - ### ReceiptScanner.validateReceipt
   Validates bitmaps returns instance of ValidationResult
