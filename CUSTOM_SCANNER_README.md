@@ -44,7 +44,7 @@ ReceiptScanner.ScannerConfig scannerConfig = new ReceiptScanner.ScannerConfig() 
   @Override
   public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
     ReceiptScanner.sendReceipt(bitmaps, apiConfig).thenAccept(edgeData -> {
-      Log.e("TAG", "Files sended");
+      Log.e("TAG", "Files sent");
     }).exceptionally((e) -> {
       Log.e("TAG", "error");
       return null;
@@ -66,62 +66,76 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
 
 - ### ReceiptScanner.startScanner:
   Starts scanner activity
-
-    #### Arguments:
-  - **context** (_Context_) - current context
-  - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
-  - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
+  - #### Input:
+    - **context** (_Context_) - current context
+    - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
+    - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
+  - #### Input:
+    - [void](#ReceiptScanner.getEdgePointsData)
 
 - ### ReceiptScanner.validateReceipt
   Validates bitmaps returns instance of ValidationResult
-
-    #### Arguments:
+  - #### Input:
     - **bitmaps** (_List&lt;Bitmap>_)
+  - #### Output:
+    - `ValidationResult`
 
 - ### ReceiptScanner.validateReceipt
-  Validates pdf from uri returns instance of ValidationResult.
-  Can throw `FileTypeException` if file is not a pdf, or `FileSizeException` if dile is over 12 MB.
+  Validates pdf from uri.
+  - #### Input:
+    - **context** (_Context_) - current context
+    - **pdfFileUri** (_Uri_) - uri of pdf
+  - #### Output:
+    - ValidationResult
+  - #### Throws:
+    - `FileTypeException` - thrown if file is not a pdf
+    - `FileSizeException` - thrown if file is over 12 MB
+    - `IOException` - thrown if file cannot be read
 
-  #### Arguments:
-  - **context** (_Context_) - current context
-  - **pdfFileUri** (_Uri_) - uri of pdf
+- ### ReceiptScanner.sendReceipt - bitmaps
+  Send **bitmaps** to ourcart
+  - #### Input:
+    - **bitmaps** (_List&lt;Bitmap>_) - max 6 bitmaps
+    - **apiConfig** (_ApiConfig_) - config specific for a client
+  - #### Output:
+    - CompletableFuture &lt;Boolean>
 
-- ### ReceiptScanner.sendReceipt
-  Send bitmaps to ourcart
-
-  #### Arguments:
-  - **bitmaps** (_List&lt;Bitmap>_)
-  - **apiConfig** (_ApiConfig_) - config specific for a client
-
-- ### ReceiptScanner.sendReceipt
-  Send pdf to ourcart.
-  Can throw `FileTypeException` if file is not a pdf, or `FileSizeException` if dile is over 12 MB.
-
-  #### Arguments:
-  - **context** (_Context_) - current context
-  - **pdfFileUri** (_Uri_) - uri of pdf
-  - **apiConfig** (_ApiConfig_) - config specific for a client
+- ### ReceiptScanner.sendReceipt - pdf
+  Send **pdf** to ourcart.
+  - #### Input:
+    - **context** (_Context_) - current context
+    - **pdfFileUri** (_Uri_) - uri of pdf
+    - **apiConfig** (_ApiConfig_) - config specific for a client
+  - #### Output:
+    - CompletableFuture &lt;Boolean>
+  - #### Throws:
+    - `FileTypeException` - thrown if file is not a pdf
+    - `FileSizeException` - thrown if file is over 12 MB
+    - `IOException` - thrown if file cannot be read
 
 - ### ReceiptScanner.getEdgePointsData
-  Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are edges of the receipt in order: top-left, top-right, bottom-left, bottom-right/
+  Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are edges of the receipt in order: 
+  
+  top-left. top-right, bottom-left, bottom-right.
+
   If no receipt was detected the points will be on the corners of bitmap.
+  - #### Input:
+    - **bitmaps** (_List&lt;Bitmap>_)
+    - **withCroppedBitmaps** (_List&lt;boolean>_)(_Optional_) - if set to true `EdgeData` will contain an already cropped bitmap in `croppedBitmap`
+  - #### Output:
+    - CompletableFuture<List<`ImageEdgeDetector.EdgeData`>>
 
-  #### Arguments:
-  - **bitmaps** (_List&lt;Bitmap>_)
-  - **withCroppedBitmaps** (_List&lt;boolean>_)(_Optional_) - if set to true `EdgeData` will contain an already cropped bitmap in `croppedBitmap`
-
-  - ### ReceiptScanner.cropBitmap
-    Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are edges of the receipt in order: top-left, top-right, bottom-left, bottom-right/
-    If no receipt was detected the points will be on the corners of bitmap.
-
-    #### Arguments:
-    - **bitmap** (_Bitmap_)
-    - **points** (_Map<Integer, PointF>_) - edges of the receipt in order edges of the receipt in order (like from `EdgeData`): 
-      - 1: top-left
-      - 2: top-right
-      - 3: bottom-left
-      - 4: bottom-right
-
+- ### ReceiptScanner.cropBitmap
+    Crops bitmap to specific points.
+    - #### Input:
+      - **bitmap** (_Bitmap_)
+      - **points** (_Map<Integer, PointF>_) - edges of the receipt in order edges of the receipt in order (like from `EdgeData`): 
+        - 1: top-left
+        - 2: top-right
+        - 3: bottom-left
+        - 4: bottom-right
+  - #### Output:
+    - Bitmap 
 
 ## ApiConfig documentation
 `ApiConfig` instance of this class must me provided to send files to ourcart, all fields must me set:
@@ -135,149 +149,146 @@ apiConfig.clientCountry = Config.COUNTRY_CODE;
 apiConfig.clientCode = Config.CLIENT_CODE;
 apiConfig.clientUserId = Config.CLIENT_USER_ID;
 ```
-### **isProd** (_boolean_) 
-determine should be send to production or staging environment.
-### **apiKey** (_string_)
-string for Ourcart requests, must match country, environment, and clientCode, provided to you by Ourcart
-### **clientCountry** (_string_)
-country code for Ourcart requests, provided to you by Ourcart
-### **clientCode** (_string_)
-client code for Ourcart requests, provided to you by Ourcart
-### **clientUserId** (_string_)
-id of client to be sended and associated with receipts, it can be any string but have it be a real string associated with currently logged in user, it will help us block fraudulent users and will provide consistent data.
+- ### **isProd** (_boolean_) 
+  determine should be send to production or staging environment.
+- ### **apiKey** (_string_)
+  string for Ourcart requests, must match country, environment, and clientCode, provided to you by Ourcart
+- ### **clientCountry** (_string_)
+  country code for Ourcart requests, provided to you by Ourcart
+- ### **clientCode** (_string_)
+  client code for Ourcart requests, provided to you by Ourcart
+- ### **clientUserId** (_string_)
+  id of client to be sent and associated with receipts, it can be any string but have it be a real string associated with currently logged in user, it will help us block fraudulent users and will provide consistent data.
 
 ## ScannerConfig documentation
 `ScannerConfig` instance of this class must me provided to handle user interactions and output from scanner Activity.
-### **isRetakeMode** (_boolean_)
-Set to `true` if you wan scanner to be in "Retake mode", it is for retaking one picture without automatic capturing and ability to change the mode to "long receipt".
+- ### **isRetakeMode** (_boolean_)
+  Set to `true` if you want scanner to be in "Retake mode", it is for retaking one picture without automatic capturing and ability to change the mode to "long receipt".
 After taking one picture activity will be finished and `onReceiptSnapped` will be executed.
-### **isLongMode** (_boolean_)
-Should scanner be in "`Long receipt mode`" by default.
+- ### **isLongMode** (_boolean_)
+  Should scanner be in "`Long receipt mode`" by default.
 
-### **capturingDuration** (_int_)
-Time in  of milliseconds before image will be capture when valid receipt have been detected during automatic mode
-### **enableAutomaticMode** (_boolean_)
-Should Automatic Mode be enabled for `Regular receipt mode`
-### **validateAngle** (_boolean_)
-Should angel be checked.
+- ### **capturingDuration** (_int_)
+  Time in  of milliseconds before image will be capture when valid receipt have been detected during automatic mode
+- ### **enableAutomaticMode** (_boolean_)
+  Should Automatic Mode be enabled for `Regular receipt mode`
+- ### **validateAngle** (_boolean_)
+  Should angle be checked.
 
 
-### **onHelpClick** (_(Context ctx) -> void_)
-Callback method executed by clicking on "help" icon in top right, gives access current context.
-### **onCloseClicked** (_(Context ctx) -> void_)
-Callback method executed by clicking on "Close" icon in top left, gives access current context.
-### **onReceiptSnapped** (_(List<Bitmap> bitmaps, Context ctx) -> void_)
-Callback method executed when Clicking on "`Next`" button in "`Long receipt mode`", or taking a single picture in "`Regular mode`" eider by `auto` or `manual` capture.
+- ### **onHelpClick** (_(Context ctx) -> void_)
+  Callback method executed by clicking on "help" icon in top right, gives access current context.
+- ### **onCloseClicked** (_(Context ctx) -> void_)
+  Callback method executed by clicking on "Close" icon in top left, gives access current context.
+- ### **onReceiptSnapped** (_(List<Bitmap> bitmaps, Context ctx) -> void_)
+  Callback method executed when Clicking on "`Next`" button in "`Long receipt mode`", or taking a single picture in "`Regular mode`" either by `auto` or `manual` capture.
 
 ## UISettings documentation
 `UISettings` instance of this class must me provided to set parameters of every part of scanner Activity.
-### **showHelpIcon** (_boolean_) (default: true)
-Should help icon be displayed
-### **showTargetBorder** (_boolean_) (default: true)
-Should aiming help (suggested place the receipt should be in) be displayed
-### **targetBorderColor** (_Integer_) (default: #ffffff)
-Color of aiming help (suggested place the receipt should be in) be displayed
-### **closeDrawable** (_Drawable_)
-Icon to be displayed instead of "Close" icon at top-left
-### **torchOnDrawable** (_Drawable_)
-Icon to be displayed instead of "TorchOn" icon at top-right when torch is on
-### **torchOffDrawable** (_Drawable_)
-Icon to be displayed instead of "TorchOff" icon at top-right when torch is off
-### **helpDrawable** (_Drawable_)
-Icon to be displayed instead of "Help" icon at top-right
-### **modeBtnActiveBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-Color of background of active mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
-### **modeBtnActiveFontColor** (_Integer_) (default: #ffffff)
-Color of font of active mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
-### **modeBtnInactiveFontColor** (_Integer_) (default: @color/ourcartTextColor)
-Color of font of inactive mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
-### **modeBtnsBackgroundColor** (_Integer_) (default: #ffffff)
-Background color of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
-### **modeBtnsFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
-Font of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
-### **modeBtnsFontSize** (_Integer_) (default: 13sp)
-Font size in "sp" of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
-### **snapBtnAutomaticCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
-Color of snap button located always at bottom center during automatic capture mode, the button itself in inactive in this state
-### **snapBtnAutomaticCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
-Color of progress animation around snap button located always at bottom center during automatic capture mode, the button itself in inactive in this state
-### **snapBtnManualCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerManualCaptureSnapBtnBackgroundColor)
-Color of snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
-### **snapBtnManualCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerManualCaptureSnapBtnBackgroundColor)
-Color of ring around snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
-### **snapBtnAutoCapturingColor** (_Integer_) (default: #ffffff)
-Color of snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself in inactive in this state     
-### **snapBtnAutoCapturingRingColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-Color of ring around, snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself in inactive in this state
-### **automaticCaptureDrawable** (_Drawable_) 
-Icon displayed on top of, snap button located always at bottom center during automatic capture mode, the button itself in inactive in this state
-### **manualCaptureDrawable** (_Drawable_)
-Icon displayed on top of, snap button located always at bottom center during manual capture mode, the button itself in active in this state, and will take picture
-### **nextBtnBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-Color of "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
-### **nextBtnFontColor** (_Integer_) (default: #ffffff)
-Color of text for "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
-### **nextBtnFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
-Font for text of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
-### **nextBtnFontSize** (_Integer_) (default: 16sp)
-Text size of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
-### **imageCounterBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-Color of background of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
-### **imageCounterFontColor** (_Integer_) (default: #ffffff)
-Color of text of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
-### **imageCounterFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
-Text font of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
-### **imageCounterFontSize** (_Integer_) (default: 14sp)
-Text size of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
-### **feedbackBackgroundColor** (_Integer_) (default: @color/ourcartScannerFeedbackBackgroundColor)
-Color of background for feedback messages displayed in type middle of screen in many situations.
-### **feedbackFontColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-Text color for feedback messages displayed in type middle of screen in many situations.
-### **feedbackFontColor** (_Typeface_) (default: @font/ourcartFontFamily)
-Font text of feedback messages displayed in type middle of screen in many situations.
-### **feedbackFontSize** (_Integer_) (default: 14sp)
-Text size of feedback messages displayed in type middle of screen in many situations.
-### **capturingProgressBorderColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-Color of progress border being drawn around the receipt during automatic capture mode when picture is being captured (2s),
-### **receiptShadowColor** (_Integer_) (default: rgba(90, 255, 255, 255))
-Color of transparent layer applied when receipt have been detected.
-### **receiptShadowBorderColor** (_Integer_) (default: #ffffff)
-Color of Border around transparent layer applied when receipt have been detected.
+- ### **showHelpIcon** (_boolean_) (default: true)
+  Should help icon be displayed
+- ### **showTargetBorder** (_boolean_) (default: true)
+  Should aiming help (suggested place the receipt should be in) be displayed
+- ### **targetBorderColor** (_Integer_) (default: #ffffff)
+  Color of aiming help (suggested place the receipt should be in) be displayed
+- ### **closeDrawable** (_Drawable_)
+  Icon to be displayed instead of "Close" icon at top-left
+- ### **torchOnDrawable** (_Drawable_)
+  Icon to be displayed instead of "TorchOn" icon at top-right when torch is on
+- ### **torchOffDrawable** (_Drawable_)
+  Icon to be displayed instead of "TorchOff" icon at top-right when torch is off
+- ### **helpDrawable** (_Drawable_)
+  Icon to be displayed instead of "Help" icon at top-right
+- ### **modeBtnActiveBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
+  Color of background of active mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
+- ### **modeBtnActiveFontColor** (_Integer_) (default: #ffffff)
+  Color of font of active mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
+- ### **modeBtnInactiveFontColor** (_Integer_) (default: @color/ourcartTextColor)
+  Color of font of inactive mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
+- ### **modeBtnsBackgroundColor** (_Integer_) (default: #ffffff)
+  Background color of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
+- ### **modeBtnsFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
+  Font of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
+- ### **modeBtnsFontSize** (_Integer_) (default: 13sp)
+  Font size in "sp" of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
+- ### **snapBtnAutomaticCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
+  Color of snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
+- ### **snapBtnAutomaticCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
+  Color of progress animation around snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
+- ### **snapBtnManualCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerManualCaptureSnapBtnBackgroundColor)
+  Color of snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
+- ### **snapBtnManualCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerManualCaptureSnapBtnBackgroundColor)
+  Color of ring around snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
+- ### **snapBtnAutoCapturingColor** (_Integer_) (default: #ffffff)
+  Color of snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself is inactive in this state     
+- ### **snapBtnAutoCapturingRingColor** (_Integer_) (default: @color/ourcartPrimaryColor)
+  Color of ring around, snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself is inactive in this state
+- ### **automaticCaptureDrawable** (_Drawable_) 
+  Icon displayed on top of, snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
+- ### **manualCaptureDrawable** (_Drawable_)
+  Icon displayed on top of, snap button located always at bottom center during manual capture mode, the button itself is active in this state, and will take picture
+- ### **nextBtnBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
+  Color of "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+- ### **nextBtnFontColor** (_Integer_) (default: #ffffff)
+  Color of text for "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+- ### **nextBtnFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
+  Font for text of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+- ### **nextBtnFontSize** (_Integer_) (default: 16sp)
+  Text size of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+- ### **imageCounterBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
+  Color of background of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+- ### **imageCounterFontColor** (_Integer_) (default: #ffffff)
+  Color of text of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+- ### **imageCounterFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
+  Text font of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+- ### **imageCounterFontSize** (_Integer_) (default: 14sp)
+  Text size of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+- ### **feedbackBackgroundColor** (_Integer_) (default: @color/ourcartScannerFeedbackBackgroundColor)
+  Color of background for feedback messages displayed in type middle of screen in many situations.
+- ### **feedbackFontColor** (_Integer_) (default: @color/ourcartPrimaryColor)
+  Text color for feedback messages displayed in type middle of screen in many situations.
+- ### **feedbackFontColor** (_Typeface_) (default: @font/ourcartFontFamily)
+  Font text of feedback messages displayed in type middle of screen in many situations.
+- ### **feedbackFontSize** (_Integer_) (default: 14sp)
+  Text size of feedback messages displayed in type middle of screen in many situations.
+- ### **receiptShadowColor** (_Integer_) (default: rgba(90, 255, 255, 255))
+  Color of transparent layer applied when receipt have been detected.
+- ### **receiptShadowBorderColor** (_Integer_) (default: #ffffff)
+  Color of Border around transparent layer applied when receipt have been detected.
 
 ## ValidationResult documentation
 Instance of of `ValidationResult` are returned by validators.
-### **isBlurry** (_Boolean_)
-Is receipt too blurry
-### **hasPoorLighting** (_Boolean_)
-Is receipt too dark
-### **hasNoText** (_Boolean_)
-Is has no text
-### **noRetailer** (_Boolean_)
-Is receipt has no retailer
-### **noDate** (_Boolean_)
-Is receipt has no date
-### **noTotal** (_Boolean_)
-Is receipt has no items / total
+- ### **isBlurry** (_Boolean_)
+  Is receipt too blurry
+- ### **hasPoorLighting** (_Boolean_)
+  Is receipt too dark
+- ### **hasNoText** (_Boolean_)
+  Is has no text
+- ### **noRetailer** (_Boolean_)
+  Is receipt has no retailer
+- ### **noDate** (_Boolean_)
+  Is receipt has no date
+- ### **noTotal** (_Boolean_)
+  Is receipt has no items / total
 
 ## EdgeData documentation
 Instance of of `EdgeData` are returned by getEdgePointsData.
-### **borderPoints** (_Map<Integer, PointF>_)
-4 border points of receipt on the bitmap in order:
+- ### **borderPoints** (_Map<Integer, PointF>_)
+  4 border points of receipt on the bitmap in order:
+  - 1: top-left
+  - 2: top-right
+  - 3: bottom-left
+  - 4: bottom-right
 
-- 1: top-left
-- 2: top-right
-- 3: bottom-left
-- 4: bottom-right
-
-If no receipt was detected the points will be on the corners of bitmap.
-### **bitmap** (_Bitmap_)
-Reference to bitmap that was analyzed
-### **croppedBitmap** (_Bitmap_)
-Bitmap already cropped to the points, must be specified that you want those or it will be null
+  If no receipt was detected the points will be on the corners of bitmap.
+- ### **bitmap** (_Bitmap_)
+  Reference to bitmap thatf was analyzed
+- ### **croppedBitmap** (_Bitmap_)
+  Bitmap already cropped to the points, must be specified that you want those or it will be null
 
 
 ## Customization of colors:
-You can customize colors eider by setting them in instance of `UISettings` and passing to `ReceiptScanner.startScanner`, or by overwriting 5 global colors. The latter approach is recommended since it requires much les configuration.
+You can customize colors either by setting them in instance of `UISettings` and passing to `ReceiptScanner.startScanner`, or by overwriting 5 global colors. The latter approach is recommended since it requires much les configuration.
 To do it go to file colors.xml and set new values:
 
 Example:
