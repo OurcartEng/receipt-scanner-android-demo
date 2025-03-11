@@ -1,4 +1,4 @@
-package com.example.receiptScannerAndroidDemo;
+package com.example.receiptScannerAndroidDemo.flow;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -12,10 +12,13 @@ import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.receiptScannerAndroidDemo.MainActivity;
+import com.example.receiptScannerAndroidDemo.R;
+import com.example.receiptScannerAndroidDemo.ScannerActivity;
+import com.example.receiptScannerAndroidDemo.config.Config;
 import com.example.receiptScannerAndroidDemo.databinding.FragmentFirstBinding;
-import com.ourcart.receiptscanner.ReceiptScanner;
+import com.ourcart.receiptscanner.ReceiptScannerFlow;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,12 +30,12 @@ public class FirstFragment extends Fragment {
 
     private static final Set<Integer> selectedCheckboxes = new HashSet<>();
 
-    private ReceiptScanner receiptScanner = new ReceiptScanner(
+    private ReceiptScannerFlow receiptScanner = new ReceiptScannerFlow(
             false,
-            "<api key>", // replace with api key
-            "US",
-            "<client code>", // replace with client code
-            "cab123"
+            Config.API_KEY,
+            Config.COUNTRY_CODE,
+            Config.CLIENT_CODE,
+            Config.CLIENT_USER_ID
     )
             .setCloseListener(context -> {
                 Intent i = new Intent(context, MainActivity.class);
@@ -60,10 +63,10 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        binding.buttonFirst.setOnClickListener(v ->
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment)
-        );
+        binding.buttonFirst.setOnClickListener(v -> {
+            Intent in = new Intent(getContext(), ScannerActivity.class);
+            startActivity(in);
+        });
 
 
         binding.checkboxInitialScreenHeading.setOnCheckedChangeListener((v, b) -> {

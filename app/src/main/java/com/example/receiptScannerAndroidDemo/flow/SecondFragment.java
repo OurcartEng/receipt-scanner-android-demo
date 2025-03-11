@@ -1,4 +1,4 @@
-package com.example.receiptScannerAndroidDemo;
+package com.example.receiptScannerAndroidDemo.flow;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.receiptScannerAndroidDemo.R;
 import com.example.receiptScannerAndroidDemo.databinding.FragmentSecondBinding;
 
 public class SecondFragment extends Fragment {

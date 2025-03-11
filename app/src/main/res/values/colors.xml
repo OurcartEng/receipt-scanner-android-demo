@@ -3,9 +3,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="ourcartPrimaryColor">#f2b700</color>
-    <color name="ourcartTextActionButtonColor">#56246f</color>
+    <color name="ourcartPrimaryColor">#56246f</color>
     <color name="ourcartTextColor">#1b1b1a</color>
+    <color name="ourcartTextActionButtonColor">#f2b700</color>
     <color name="ourcartBackgroundPrimaryColor">#ffffff</color>
     <color name="ourcartBackgroundSecondaryColor">#ffffff</color>
+
+
+    <color name="ourcartScannerFeedbackBackgroundColor">#F1EBFA</color>
+    <color name="ourcartScannerAutomaticCaptureSnapBtnBackgroundColor">#ffffff</color>
+    <color name="ourcartScannerManualCaptureSnapBtnBackgroundColor">#F2B700</color>
 </resources>

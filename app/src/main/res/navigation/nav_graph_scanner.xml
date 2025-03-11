@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_scanner"
+    app:startDestination="@id/ConfigFragment">
+
+    <fragment
+        android:id="@+id/ConfigFragment"
+        android:name="com.example.receiptScannerAndroidDemo.scanner.ScannerConfigFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_scanner_config">
+
+        <action
+            android:id="@+id/action_goto_PreviewFragment"
+            app:destination="@id/PreviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/PreviewFragment"
+        android:name="com.example.receiptScannerAndroidDemo.scanner.ScannerPreviewFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_scanner_preview">
+
+        <action
+            android:id="@+id/action_goto_ConfigFragment"
+            app:destination="@id/ConfigFragment" />
+    </fragment>
+</navigation>

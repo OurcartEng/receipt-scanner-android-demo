@@ -16,11 +16,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
         maven {
             url = uri("s3://public-maven.ourcart.com/release" )
             credentials(AwsCredentials::class) {
                 accessKey = ""
-                secretKey =""
+                secretKey = ""
             }
         }
     }
