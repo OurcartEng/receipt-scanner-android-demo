@@ -7,7 +7,7 @@ Add to your `build.gradle.kts` dependencies:
 implementation("com.ourcart:receiptscanner:1.2.1")
 ```
 
-Add in settings.gradle.kts new maven repository:
+Add in settings.gradle.kts new maven rFepository:
 ```agsl
 maven {
   url = uri("s3://public-maven.ourcart.com/release" )
