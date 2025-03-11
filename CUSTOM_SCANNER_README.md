@@ -73,25 +73,6 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
   - #### Input:
     - void
 
-- ### ReceiptScanner.validateReceipt
-  Validates bitmaps returns instance of ValidationResult
-  - #### Input:
-    - **bitmaps** (_List&lt;Bitmap>_)
-  - #### Output:
-    - `ValidationResult`
-
-- ### ReceiptScanner.validateReceipt
-  Validates pdf from uri.
-  - #### Input:
-    - **context** (_Context_) - current context
-    - **pdfFileUri** (_Uri_) - uri of pdf
-  - #### Output:
-    - ValidationResult
-  - #### Throws:
-    - `FileTypeException` - thrown if file is not a pdf
-    - `FileSizeException` - thrown if file is over 12 MB
-    - `IOException` - thrown if file cannot be read
-
 - ### ReceiptScanner.sendReceipt - bitmaps
   Send **bitmaps** to ourcart
   - #### Input:
@@ -255,21 +236,6 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
   Color of transparent layer applied when receipt have been detected.
 - ### **receiptShadowBorderColor** (_Integer_) (default: #ffffff)
   Color of Border around transparent layer applied when receipt have been detected.
-
-## ValidationResult documentation
-Instance of of `ValidationResult` are returned by validators.
-- ### **isBlurry** (_Boolean_)
-  Is receipt too blurry
-- ### **hasPoorLighting** (_Boolean_)
-  Is receipt too dark
-- ### **hasNoText** (_Boolean_)
-  Is has no text
-- ### **noRetailer** (_Boolean_)
-  Is receipt has no retailer
-- ### **noDate** (_Boolean_)
-  Is receipt has no date
-- ### **noTotal** (_Boolean_)
-  Is receipt has no items / total
 
 ## EdgeData documentation
 Instance of of `EdgeData` are returned by getEdgePointsData.
