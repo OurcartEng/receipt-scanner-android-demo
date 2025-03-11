@@ -287,12 +287,6 @@ Lets set some random colors
 </resources>
 ```
 
-,and the result is:  
-
-![example_5](https://s3.amazonaws.com/ourcart.platform.assets/images/example5.jpg)  
-
-... beautiful.
-
 ### Colors to customize:
 - **Main colors**
   - **ourcartPrimaryColor** (default: `#92C91F`) - color of links, action buttons, and many ornaments, should be the main color of the company
@@ -474,22 +468,6 @@ All texts with default values in xml format:
 - `<b>` - make the text bold, also add attribute to string `formatted="false"` may not work without it
 - `<u>` - add underline to text
 
-### Placement of most texts:
-![readme_1](https://s3.amazonaws.com/ourcart.platform.assets/images/readme1.jpg)
-![readme_2](https://s3.amazonaws.com/ourcart.platform.assets/images/readme1_1.jpg)
-![readme_3](https://s3.amazonaws.com/ourcart.platform.assets/images/readme2.jpg)
-![readme_4](https://s3.amazonaws.com/ourcart.platform.assets/images/readme3.jpg)
-![readme_5](https://s3.amazonaws.com/ourcart.platform.assets/images/readme4.jpg)
-![readme_6](https://s3.amazonaws.com/ourcart.platform.assets/images/readme5.jpg)
-![readme_7](https://s3.amazonaws.com/ourcart.platform.assets/images/readme6_1.jpg)
-![readme_8](https://s3.amazonaws.com/ourcart.platform.assets/images/readme7.jpg)
-![readme_9](https://s3.amazonaws.com/ourcart.platform.assets/images/readme8_1.jpg)
-![readme_10](https://s3.amazonaws.com/ourcart.platform.assets/images/readme9.jpg)
-![readme_11](https://s3.amazonaws.com/ourcart.platform.assets/images/readme10.jpg)
-![readme_12](https://s3.amazonaws.com/ourcart.platform.assets/images/readme11.jpg)
-![readme_13](https://s3.amazonaws.com/ourcart.platform.assets/images/readme12.jpg)
-![readme_14](https://s3.amazonaws.com/ourcart.platform.assets/images/readme13.jpg)
-![readme_14](https://s3.amazonaws.com/ourcart.platform.assets/images/readme14.jpg)
 
 ### Explanation of some texts:
  - `OURCART_too_many_files` (default: "Maximum 6 files allowed") - displayed when user pick more then 6 files from the device
