@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.2.1")
+implementation("com.ourcart:receiptscanner:1.2.2")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -176,8 +176,10 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **isLongMode** (_boolean_)
   Should scanner be in "`Long receipt mode`" by default.
 
-- ### **capturingDuration** (_int_)
+- ### **capturingDuration** (_int_) (_default: 2000_)
   Time in milliseconds before image will be captured when valid receipt have been detected during automatic mode (time to get camera focus)
+- ### **switchToManualTimeout** (_int_) (_default: 10000_)
+  Time in milliseconds before app will switch to "manual capturing" if no receipt will be detected in automatic mode for regular receipt
 - ### **enableAutomaticMode** (_boolean_)
   Should Automatic Mode be enabled for `Regular receipt mode`
 - ### **validateAngle** (_boolean_)

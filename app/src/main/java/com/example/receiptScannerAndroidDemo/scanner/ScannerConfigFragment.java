@@ -74,6 +74,7 @@ public class ScannerConfigFragment extends Fragment {
         setFontSizeInput(binding.imageCounterFontSize, ScannerActivity.uiSettings.imageCounterFontSize, 14, val -> ScannerActivity.uiSettings.imageCounterFontSize = val);
         setFontSizeInput(binding.feedbackFontSize, ScannerActivity.uiSettings.feedbackFontSize, 14, val -> ScannerActivity.uiSettings.feedbackFontSize = val);
         setFontSizeInput(binding.capturingDuration, ScannerActivity.scannerConfig.capturingDuration, 2000, val -> ScannerActivity.scannerConfig.capturingDuration = val);
+        setFontSizeInput(binding.switchToManualTimeout, ScannerActivity.scannerConfig.switchToManualTimeout, 10000, val -> ScannerActivity.scannerConfig.switchToManualTimeout = val);
 
         int primaryColor = getResources().getColor(R.color.ourcartPrimaryColor);
         int textColor = getResources().getColor(R.color.ourcartTextColor);
