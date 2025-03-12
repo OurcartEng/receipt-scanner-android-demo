@@ -1,5 +1,30 @@
 # receipt-scanner-android-demo
 
+## Concept
+The Ourcart SDK provides a complete toolkit for seamless receipt capture and processing. It helps users easily upload high-quality receipts to the Ourcart API through three core components:
+1. Camera Component (ReceiptScanner) - A visual interface with features to guide users in capturing quality receipt photos:
+ - Edge detection with visual feedback
+ - Real-time angle verification
+ - Auto-capture with manual override option
+ - Multi-snapshot support for long receipts (manual switching)
+ - Customizable UI elements
+ - Automatic toggle to manual scanning after a configurable delay
+2. Cropping Component (EdgeData) - A non-visual module for intelligent image processing:
+ - Automatic receipt detection in snapshots
+ - Corner point identification for precise cropping
+ - Support for long receipts where corners touch image edges
+ - Receipt straightening with adjusted ratio output
+3. Receipt API Component (sendReceipt) - a non-visual module handling the backend communication:
+ - Image optimization (resizing and compression)
+ - Secure upload handling
+ - Integration with Ourcart's backend processing
+
+Clip showing the capabilities of the camera component:
+
+https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
+
+
+
 ## Installation
 
 Add to your `build.gradle.kts` dependencies:
@@ -62,7 +87,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
 
 
 ## ReceiptScanner documentation
-`ReceiptScanner` have static methods that can allow you to run scanner, validate, get border points, and send receipt to ourcart:
+`ReceiptScanner` have static methods that can allow you to run scanner, validate, get corner points, and send receipt to Ourcart backend API:
 
 - ### ReceiptScanner.startScanner:
   Starts scanner activity
@@ -70,11 +95,11 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - **context** (_Context_) - current context
     - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
     - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
-  - #### Input:
+  - #### Output:
     - void
 
 - ### ReceiptScanner.sendReceipt - bitmaps
-  Send **bitmaps** to ourcart
+  Send **bitmaps** to Ourcart
   - #### Input:
     - **bitmaps** (_List&lt;Bitmap>_) - max 6 bitmaps
     - **apiConfig** (_ApiConfig_) - config specific for a client
@@ -95,7 +120,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - `IOException` - thrown if file cannot be read
 
 - ### ReceiptScanner.getEdgePointsData
-  Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are edges of the receipt in order: 
+  Takes list of bitmaps and returns list of `EdgeData` instances with bitmap and points that are corners of the receipt in order: 
   
   top-left. top-right, bottom-left, bottom-right.
 
@@ -119,7 +144,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - Bitmap 
 
 ## ApiConfig documentation
-`ApiConfig` instance of this class must me provided to send files to ourcart, all fields must me set:
+`ApiConfig` instance of this class must me provided to send files to Ourcart, all fields must me set:
 
 Example:
 ```java
@@ -150,7 +175,7 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
   Should scanner be in "`Long receipt mode`" by default.
 
 - ### **capturingDuration** (_int_)
-  Time in  of milliseconds before image will be capture when valid receipt have been detected during automatic mode
+  Time in milliseconds before image will be captured when valid receipt have been detected during automatic mode (time to get camera focus)
 - ### **enableAutomaticMode** (_boolean_)
   Should Automatic Mode be enabled for `Regular receipt mode`
 - ### **validateAngle** (_boolean_)
@@ -193,54 +218,54 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **modeBtnsFontSize** (_Integer_) (default: 13sp)
   Font size in "sp" of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
 - ### **snapBtnAutomaticCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
-  Color of snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
+  Color of the snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
 - ### **snapBtnAutomaticCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
-  Color of progress animation around snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
+  Color of the progress animation around snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
 - ### **snapBtnManualCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerManualCaptureSnapBtnBackgroundColor)
-  Color of snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
+  Color of the snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
 - ### **snapBtnManualCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerManualCaptureSnapBtnBackgroundColor)
-  Color of ring around snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
+  Color of the ring around snap button located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
 - ### **snapBtnAutoCapturingColor** (_Integer_) (default: #ffffff)
-  Color of snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself is inactive in this state     
+  Color of the snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself is inactive in this state     
 - ### **snapBtnAutoCapturingRingColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-  Color of ring around, snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself is inactive in this state
+  Color of the ring around the snap button located always at bottom center during automatic capture mode when picture is being captured (2s), the button itself is inactive in this state
 - ### **automaticCaptureDrawable** (_Drawable_) 
-  Icon displayed on top of, snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
+  Icon displayed on top of the snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
 - ### **manualCaptureDrawable** (_Drawable_)
-  Icon displayed on top of, snap button located always at bottom center during manual capture mode, the button itself is active in this state, and will take picture
+  Icon displayed on top of the snap button located always at bottom center during manual capture mode, the button itself is active in this state, and will take picture
 - ### **nextBtnBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-  Color of "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+  Color of the "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
 - ### **nextBtnFontColor** (_Integer_) (default: #ffffff)
-  Color of text for "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+  Color of the text for "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
 - ### **nextBtnFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
-  Font for text of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+  Font for the text of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
 - ### **nextBtnFontSize** (_Integer_) (default: 16sp)
-  Text size of "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
+  Text size of the "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
 - ### **imageCounterBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-  Color of background of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+  Color of the background of the image counter in long receipt mode. Displayed at bottom left during long receipt mode.
 - ### **imageCounterFontColor** (_Integer_) (default: #ffffff)
-  Color of text of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+  Color of the text of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
 - ### **imageCounterFontFamily** (_Typeface_) (default: @font/ourcartFontFamily)
-  Text font of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+  Text font of the image counter in long receipt mode. Displayed at bottom left during long receipt mode.
 - ### **imageCounterFontSize** (_Integer_) (default: 14sp)
-  Text size of image counter in long receipt mode. Displayed at bottom left during long receipt mode.
+  Text size of the image counter in long receipt mode. Displayed at bottom left during long receipt mode.
 - ### **feedbackBackgroundColor** (_Integer_) (default: @color/ourcartScannerFeedbackBackgroundColor)
-  Color of background for feedback messages displayed in type middle of screen in many situations.
+  Color of the background for feedback messages displayed in type middle of screen in many situations.
 - ### **feedbackFontColor** (_Integer_) (default: @color/ourcartPrimaryColor)
-  Text color for feedback messages displayed in type middle of screen in many situations.
+  Text color of the feedback messages displayed in type middle of screen in many situations.
 - ### **feedbackFontColor** (_Typeface_) (default: @font/ourcartFontFamily)
-  Font text of feedback messages displayed in type middle of screen in many situations.
+  Font text of the feedback messages displayed in type middle of screen in many situations.
 - ### **feedbackFontSize** (_Integer_) (default: 14sp)
-  Text size of feedback messages displayed in type middle of screen in many situations.
+  Text size of the feedback messages displayed in type middle of screen in many situations.
 - ### **receiptShadowColor** (_Integer_) (default: rgba(90, 255, 255, 255))
-  Color of transparent layer applied when receipt have been detected.
+  Color of the transparent layer applied when receipt have been detected.
 - ### **receiptShadowBorderColor** (_Integer_) (default: #ffffff)
-  Color of Border around transparent layer applied when receipt have been detected.
+  Color of the torder around transparent layer applied when receipt have been detected.
 
 ## EdgeData documentation
-Instance of of `EdgeData` are returned by getEdgePointsData.
+Instance of `EdgeData` is returned by getEdgePointsData.
 - ### **borderPoints** (_Map<Integer, PointF>_)
-  4 border points of receipt on the bitmap in order:
+  4 border points of the receipt on the bitmap in order:
   - 1: top-left
   - 2: top-right
   - 3: bottom-left
@@ -248,13 +273,13 @@ Instance of of `EdgeData` are returned by getEdgePointsData.
 
   If no receipt was detected the points will be on the corners of bitmap.
 - ### **bitmap** (_Bitmap_)
-  Reference to bitmap thatf was analyzed
+  Reference to bitmap that was analyzed
 - ### **croppedBitmap** (_Bitmap_)
   Bitmap already cropped to the points, must be specified that you want those or it will be null
 
 
 ## Customization of colors:
-You can customize colors either by setting them in instance of `UISettings` and passing to `ReceiptScanner.startScanner`, or by overwriting 5 global colors. The latter approach is recommended since it requires much les configuration.
+You can customize colors either by setting them in instance of `UISettings` and passing to `ReceiptScanner.startScanner`, or by overwriting 5 global colors.
 To do it go to file colors.xml and set new values:
 
 Example:
@@ -276,8 +301,8 @@ Example:
   - **ourcartScannerAutomaticCaptureSnapBtnBackgroundColor** (default: `#ffffff`) - Color of snap button and the animation spinning around it located always at bottom center during automatic capture mode, the button itself in inactive in this state
   - **ourcartScannerManualCaptureSnapBtnBackgroundColor** (default: `#F2B700`) - Color of snap button and ring around it located always at bottom center during manual capture mode, the button is active, can be clicked, and will take picture
 
-## Customization of font:
-Same as color you can overwrite font globally by adding “`ourcartFontFamily`” to styles, default font is `Poppins`.
+## Customization of the font:
+Same as the color you can overwrite font globally by adding “`ourcartFontFamily`” to styles, default font is `Poppins`.
 Make sure that font you picking is an xml describing `font-family` resource.
 Or customize every font displayed by setting them in instance of `UISettings` and passing to `ReceiptScanner.startScanner`
 
