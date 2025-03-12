@@ -98,7 +98,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
   - #### Output:
     - void
 
-📤 ReceiptScanner sendReceipts
+##📤 ReceiptScanner sendReceipts
 - ### ReceiptScanner.sendReceipt - bitmaps
   Send **bitmaps** to Ourcart
   - #### Input:
@@ -209,7 +209,7 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **helpDrawable** (_Drawable_)
   Icon to be displayed instead of "Help" icon at top-right
 
-##### 📌 Switch Icons (Mode Buttons)
+### 📌 Switch Icons (Mode Buttons)
 - ### **modeBtnActiveBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
   Color of background of active mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
 - ### **modeBtnActiveFontColor** (_Integer_) (default: #ffffff)
@@ -223,7 +223,7 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **modeBtnsFontSize** (_Integer_) (default: 13sp)
   Font size in "sp" of both mode button that allows you to switch between regular and long receipt placed at bottom center on top of snap mode.
 
-##### 🎯 Shutter Button
+### 🎯 Shutter Button
 - ### **snapBtnAutomaticCaptureModeColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
   Color of the snap button located always at bottom center during automatic capture mode, the button itself is inactive in this state
 - ### **snapBtnAutomaticCaptureModeRingColor** (_Integer_) (default: @ourcart/ourcartScannerAutomaticCaptureSnapBtnBackgroundColor)
@@ -241,7 +241,7 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **manualCaptureDrawable** (_Drawable_)
   Icon displayed on top of the snap button located always at bottom center during manual capture mode, the button itself is active in this state, and will take picture
 
-##### ⏭️ Next Button
+### ⏭️ Next Button
 - ### **nextBtnBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
   Color of the "Next" button that confirms snapping of all parts of receipt in long receipt mode Displayed at bottom right during long receipt mode when at least one picture has been snapped.
 - ### **nextBtnFontColor** (_Integer_) (default: #ffffff)
@@ -251,7 +251,7 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **nextBtnFontSize** (_Integer_) (default: 16sp)
   Text size of the "Next" button that confirms snapping of all parts of receipt in long receipt mode. Displayed at bottom right during long receipt mode when at least one picture has been snapped.
 
-##### 📸 Image Counter
+### 📸 Image Counter
 - ### **imageCounterBackgroundColor** (_Integer_) (default: @color/ourcartPrimaryColor)
   Color of the background of the image counter in long receipt mode. Displayed at bottom left during long receipt mode.
 - ### **imageCounterFontColor** (_Integer_) (default: #ffffff)
@@ -261,7 +261,7 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **imageCounterFontSize** (_Integer_) (default: 14sp)
   Text size of the image counter in long receipt mode. Displayed at bottom left during long receipt mode.
 
-##### 💬 Message Container
+### 💬 Message Container
 - ### **feedbackBackgroundColor** (_Integer_) (default: @color/ourcartScannerFeedbackBackgroundColor)
   Color of the background for feedback messages displayed in type middle of screen in many situations.
 - ### **feedbackFontColor** (_Integer_) (default: @color/ourcartPrimaryColor)
