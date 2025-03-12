@@ -98,7 +98,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
   - #### Output:
     - void
 
-##📤 ReceiptScanner sendReceipts
+## 📤 ReceiptScanner sendReceipts
 - ### ReceiptScanner.sendReceipt - bitmaps
   Send **bitmaps** to Ourcart
   - #### Input:
