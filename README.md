@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.2.2")
+implementation("com.ourcart:receiptscanner:1.2.3")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -268,8 +268,6 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
   Color of the background for feedback messages displayed in type middle of screen in many situations.
 - ### **feedbackFontColor** (_Integer_) (default: @color/ourcartPrimaryColor)
   Text color of the feedback messages displayed in type middle of screen in many situations.
-- ### **feedbackFontColor** (_Typeface_) (default: @font/ourcartFontFamily)
-  Font text of the feedback messages displayed in type middle of screen in many situations.
 - ### **feedbackFontSize** (_Integer_) (default: 14sp)
   Text size of the feedback messages displayed in type middle of screen in many situations.
 - ### **receiptShadowColor** (_Integer_) (default: rgba(90, 255, 255, 255))
