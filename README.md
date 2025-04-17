@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.2.3")
+implementation("com.ourcart:receiptscanner:1.3.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -192,6 +192,20 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
   Callback method executed by clicking on "Close" icon in top left, gives access current context.
 - ### **onReceiptSnapped** (_(List<Bitmap> bitmaps, Context ctx) -> void_)
   Callback method executed when Clicking on "`Next`" button in "`Long receipt mode`", or taking a single picture in "`Regular mode`" either by `auto` or `manual` capture.
+- ### **onEvent** (_(ScannerEvent event) -> void_)
+  Callback executed on user events gets the enum of events:
+```java
+package com.ourcart.receiptscanner.enums;
+
+public enum ScannerEvent {
+  TORCH_ON, // event on enabling torch by user
+  TORCH_OFF,// event off enabling torch by user
+  LONG_RECEIPT_MODE, // event on clicking on "Long receipt" button by user
+  REGULAR_RECEIPT_MODE, // event on clicking on "Regular receipt" button by user
+  LONG_RECEIPT_PHOTO, // event on clicking on taking photo in "Long receipt" mode by user
+  MANUAL_MODE, // event on automatic switching to manual capture in regular mode if no image was detected
+}
+```
 
 ## UISettings documentation
 🎨 `UISettings` instance of this class must me provided to set parameters of every part of scanner Activity.
@@ -425,12 +439,12 @@ All texts with default values in xml format:
 <string name="OURCART_looking_for_receipts">Looking for receipt...</string>
 <string name="OURCART_HOLD_STEADY">Hold your camera steady,\n we are capturing...</string>
 <string name="OURCART_AUTO_MANUAL_ON">No receipt found.\n Capture manually.</string>
-<string name="OURCART_AUTO_CAPTURE_ON">Auto-capture is on</string>
-<string name="OURCART_AUTO_CAPTURE_OFF">Auto-capture is off</string>
 <string name="OURCART_REGULAR_RECEIPT_MODE">Regular receipt mode</string>
 <string name="OURCART_LONG_RECEIPT_MODE">Long receipt mode</string>
-<string name="OURCART_regular_receipt">Regular Receipt</string>
-<string name="OURCART_long_receipt">Long Receipt</string>
+<string name="OURCART_regular_receipt_btn_automatic_mode">Regular Receipt</string>
+<string name="OURCART_long_receipt_btn_automatic_mode">Long Receipt</string>
+<string name="OURCART_regular_receipt_btn_regular_mode">Regular Receipt</string>
+<string name="OURCART_long_receipt_btn_regular_mode">Long Receipt</string>
 <string name="OURCART_next">Next</string>
 ```
 

@@ -8,6 +8,11 @@
     <string name="start">Start</string>
     <string name="previous">Previous</string>
 
+    <string name="OURCART_regular_receipt_btn_automatic_mode">Regular Receipt auto</string>
+    <string name="OURCART_long_receipt_btn_automatic_mode">Long Receipt auto</string>
+    <string name="OURCART_regular_receipt_btn_regular_mode">Regular Receipt</string>
+    <string name="OURCART_long_receipt_btn_regular_mode">Long Receipt</string>
+
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus

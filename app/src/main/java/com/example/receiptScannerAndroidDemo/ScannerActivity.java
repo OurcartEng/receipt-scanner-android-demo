@@ -5,7 +5,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
@@ -19,9 +18,9 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.receiptScannerAndroidDemo.scanner.ScannerConfigFragment;
 import com.example.receiptScannerAndroidDemo.scanner.ScannerPreviewFragment;
 import com.ourcart.receiptscanner.ReceiptScanner;
+import com.ourcart.receiptscanner.enums.ScannerEvent;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,8 +64,8 @@ public class ScannerActivity extends AppCompatActivity {
                         "onHelpClick",
                         Toast.LENGTH_LONG).show();
 
-                Intent in = new Intent(ctx, ScannerActivity.class);
-                startActivity(in);
+               // Intent in = new Intent(ctx, ScannerActivity.class);
+              //  startActivity(in);
             }
 
             @Override
@@ -84,6 +83,15 @@ public class ScannerActivity extends AppCompatActivity {
 
                 Intent in = new Intent(ctx, ScannerActivity.class);
                 startActivity(in);
+            }
+
+            @Override
+            public void onEvent(ScannerEvent event) {
+                Log.e("TAG", "onEvent");
+
+                Toast.makeText(ScannerActivity.this,
+                        "Event: " + event,
+                        Toast.LENGTH_LONG).show();
             }
         };
 
