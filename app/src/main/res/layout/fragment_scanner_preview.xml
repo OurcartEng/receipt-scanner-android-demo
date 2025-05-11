@@ -20,38 +20,47 @@
         android:id="@+id/option_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
+        android:orientation="vertical"
+        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_file_btn">
 
-        <Button
-            android:id="@+id/find_crop_points_btn"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Find crop points"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="horizontal"
+            android:padding="2dp">
+            <Button
+                android:id="@+id/find_crop_points_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find crop points"/>
 
-        <Button
-            android:id="@+id/validate_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Validate"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <Button
+                android:id="@+id/send_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send"/>
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/send_btn"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="horizontal"
+            android:padding="2dp">
+            <Button
+                android:id="@+id/pre_validate_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ML update check"/>
+
+            <Button
+                android:id="@+id/validate_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Validate"/>
+        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
