@@ -143,7 +143,123 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
         - 3: bottom-left
         - 4: bottom-right
   - #### Output:
-    - Bitmap 
+   - Bitmap
+
+## 🟢 Validation of receipts
+It requires ML model that needs to be downloaded. First run `preValidationInit` early so it can check and download the model, then check is the model is present with `getPreValidationStatus` and run the validation with `validateReceipt`.
+- ### ReceiptScanner.preValidationInit
+  Method that will update/download ML model used in validation, it will not block ability to validate on a old version of ML model, it is suggested to run this method early during startup of application.
+  - #### Input:
+    - **context** (_Context_)
+    - **requireWifi** (_boolean_) - if `true` the update/download will only be performed when WIFI on enabled, and on Error will be executed with `WifiDisabledException` 
+    - **onModelAvailable** (_Consumer&lt;Boolean>_)(_Optional_) - Callback executed when updated if performed successfully or if it is not needed. It gets a boolean value that indicates has model been updated or not.
+    - **onError** (_Consumer&lt;Exception>_)(_Optional_) - Callback executed when error occurred. 
+  - #### Output:
+    - void
+
+Example:
+```java
+  ReceiptScanner.preValidationInit(
+      getContext(),
+      true,
+      (hasUpdatePreformed) -> {
+          Toast.makeText(
+                getContext(),
+                hasUpdatePreformed ? "New model downloaded, and updated" : "No update needed, newest ML model version already present",
+                Toast.LENGTH_LONG
+          ).show();
+      },
+      (e) -> {
+          if (e instanceof ImageValidator.WifiDisabledException) {
+              Toast.makeText(getContext(), "Wifi needs to be enabled", Toast.LENGTH_LONG).show();
+          } else {
+              Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+          }
+  });
+```
+
+- ### ReceiptScanner.getPreValidationStatus
+  Method that checks the Possibility of performing validation check. Only `ValidationStatus.NOT_AVAILABLE` indicates that it is not possible.
+
+  - #### Output:
+    - `ValidationStatus` - Enum that have 3 possible values:
+      - `AVAILABLE` - newest version of ML model is present, validation is possible
+      - `NOT_AVAILABLE` - no ML model is present, validation is **NOT** possible
+      - `AVAILABLE_UPDATING` - a version of ML model is present, update is in progress, validation is possible
+
+
+- ### ReceiptScanner.validateReceipt - BITMAPS
+  - #### Input:
+    - **context** (_Context_)
+    - **bitmaps** (_List&lt;Bitmap>_)
+  - #### Output:
+    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `hasNoText`, `noRetailer`, `noDate`, `noTime` and `noTotal`
+  - #### Throws:
+    - `ModelUnavailableException` - thrown if ML model is not available
+
+Example:
+```java
+if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_AVAILABLE) {
+    try {
+        v.setEnabled(false);
+        ReceiptScanner.validateReceipt(getContext(), bitmaps)
+                .thenAccept((results) -> {
+                     StringBuilder sb = new StringBuilder();
+                     sb.append("hasNoText: " + validationResult.hasNoText + "\n");
+                     sb.append("noDate: " + validationResult.noDate + "\n");
+                     sb.append("noTime: " + validationResult.noTime + "\n");
+                     sb.append("noRetailer: " + validationResult.noRetailer + "\n");
+                     sb.append("noTotal: " + validationResult.noTotal + "\n");
+
+                     Log.i(TAG, sb.toString());
+                });
+    } catch (ImageValidator.ModelUnavailableException e) {
+        // first line ("if") makes this error impossible
+        Toast.makeText(getContext(), "No model available", Toast.LENGTH_LONG).show();
+    }
+}
+```
+
+- ### ReceiptScanner.validateReceipt - PDF
+  - #### Input:
+    - **context** (_Context_)
+    - **pdfFileUri** (_Uri_)
+  - #### Output:
+    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `hasNoText`, `noRetailer`, `noDate`, `noTime` and `noTotal`
+  - #### Throws:
+    - `ModelUnavailableException` - thrown if ML model is not available
+    - `FileTypeException` - thrown if file is not a pdf
+    - `FileSizeException` - thrown if file is over 12 MB
+    - `IOException` - thrown if file cannot be read
+
+Example:
+```java
+if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_AVAILABLE) {
+    try {
+        v.setEnabled(false);
+        ReceiptScanner.validateReceipt(getContext(), pdfUri)
+                .thenAccept((validationResult) -> {
+                     StringBuilder sb = new StringBuilder();
+                     sb.append("hasNoText: " + validationResult.hasNoText + "\n");
+                     sb.append("noDate: " + validationResult.noDate + "\n");
+                     sb.append("noTime: " + validationResult.noTime + "\n");
+                     sb.append("noRetailer: " + validationResult.noRetailer + "\n");
+                     sb.append("noTotal: " + validationResult.noTotal + "\n");
+
+                     Log.i(TAG, sb.toString());
+                });
+    } catch (FileService.FileTypeException e) {
+        Toast.makeText(getContext(), "Wrong file type", Toast.LENGTH_LONG).show();
+    } catch (FileService.FileSizeException e) {
+        Toast.makeText(getContext(), "File too large", Toast.LENGTH_LONG).show();
+    } catch (ImageValidator.ModelUnavailableException e) {
+        // first line ("if") makes this error impossible
+        Toast.makeText(getContext(), "No model available", Toast.LENGTH_LONG).show();
+    } catch (IOException e) {
+        Toast.makeText(getContext(), "Read file error", Toast.LENGTH_LONG).show();
+    }
+}
+```
 
 ## ApiConfig documentation
 📌 `ApiConfig` instance of this class must me provided to send files to Ourcart, all fields must me set:
