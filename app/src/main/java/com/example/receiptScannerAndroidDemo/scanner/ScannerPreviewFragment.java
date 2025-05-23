@@ -25,6 +25,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import android.widget.Toast;
 import com.example.receiptScannerAndroidDemo.config.Config;
 import com.example.receiptScannerAndroidDemo.databinding.FragmentScannerPreviewBinding;
 import com.ourcart.receiptscanner.ReceiptScanner;
+import com.ourcart.receiptscanner.enums.ValidationStatus;
 import com.ourcart.receiptscanner.utils.FileService;
 import com.ourcart.receiptscanner.utils.ImageEdgeDetector;
 import com.ourcart.receiptscanner.utils.ImageValidator;
@@ -83,7 +85,7 @@ public class ScannerPreviewFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        super.onViewCreated(view, null);
 
         updateView();
 
@@ -122,6 +124,37 @@ public class ScannerPreviewFragment extends Fragment {
             }
         });
 
+        binding.preValidateBtn.setOnClickListener(v -> {
+            v.setEnabled(false);
+            Toast.makeText(
+                    getContext(),
+                    "ML model version checking...",
+                    Toast.LENGTH_LONG
+            ).show();
+
+            ReceiptScanner.preValidationInit(
+                getContext(),
+                true,
+                (updatePreformed) -> {
+                    Toast.makeText(
+                            getContext(),
+                            updatePreformed ? "New model downloaded, and updated" : "No update needed, newest ML model version already present",
+                            Toast.LENGTH_LONG
+                    ).show();
+
+                    updateValidationBtn();
+                    v.setEnabled(true);
+                },
+                (e) -> {
+                    if (e instanceof ImageValidator.WifiDisabledException) {
+                        Toast.makeText(getContext(), "Wifi needs to be enabled", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                    v.setEnabled(true);
+            });
+        });
+
         ValidationResultsFragment newFragment = new ValidationResultsFragment();
         binding.validateBtn.setOnClickListener(v -> {
             if (pdfUri != null) {
@@ -134,16 +167,18 @@ public class ScannerPreviewFragment extends Fragment {
                                 v.setEnabled(true);
                             });
                 } catch (FileService.FileTypeException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(getContext(), "Wrong file type", Toast.LENGTH_LONG).show();
                 } catch (FileService.FileSizeException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(getContext(), "File too large", Toast.LENGTH_LONG).show();
+                } catch (ImageValidator.ModelUnavailableException e) {
+                    Toast.makeText(getContext(), "No model available", Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(getContext(), "Other error", Toast.LENGTH_LONG).show();
                 }
             }
             if (!bitmaps.isEmpty()) {
                 v.setEnabled(false);
-                ReceiptScanner.validateReceipt(bitmaps)
+                ReceiptScanner.validateReceipt(getContext(), bitmaps)
                         .thenAccept((results) -> {
                             newFragment.setValidationResult(results);
                             newFragment.show(getActivity().getSupportFragmentManager(), "validate");
@@ -203,6 +238,8 @@ public class ScannerPreviewFragment extends Fragment {
 
     private void updateView() {
         binding.previewScroll.removeAllViews();
+        updateValidationBtn();
+
         if (pdfUri != null) {
             binding.findCropPointsBtn.setEnabled(false);
             binding.optionContainer.setVisibility(View.VISIBLE);
@@ -224,6 +261,10 @@ public class ScannerPreviewFragment extends Fragment {
         binding.imageLayout.setVisibility(View.GONE);
         binding.nodataMessage.setVisibility(View.VISIBLE);
         binding.pdfLoaded.setVisibility(View.GONE);
+    }
+
+    private void updateValidationBtn() {
+        binding.validateBtn.setEnabled(ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_AVAILABLE);
     }
 
     private void showBitmaps() {
@@ -349,9 +390,8 @@ public class ScannerPreviewFragment extends Fragment {
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
              StringBuilder sb = new StringBuilder();
              sb.append("hasNoText: " + validationResult.hasNoText + "\n");
-             sb.append("hasPoorLighting: " + validationResult.hasPoorLighting + "\n");
-             sb.append("isBlurry: " + validationResult.isBlurry + "\n");
              sb.append("noDate: " + validationResult.noDate + "\n");
+             sb.append("noTime: " + validationResult.noTime + "\n");
              sb.append("noRetailer: " + validationResult.noRetailer + "\n");
              sb.append("noTotal: " + validationResult.noTotal + "\n");
 
