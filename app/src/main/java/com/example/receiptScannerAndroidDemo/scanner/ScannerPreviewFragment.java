@@ -43,7 +43,6 @@ import com.ourcart.receiptscanner.utils.ImageEdgeDetector;
 import com.ourcart.receiptscanner.utils.ImageValidator;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +53,7 @@ import java.util.Set;
 public class ScannerPreviewFragment extends Fragment {
 
     public static Uri pdfUri = null;
-    public static List<Bitmap> bitmaps = new ArrayList<>();
+    public static List<Bitmap> bitmaps;
     private final String[] MIMES = new String[] {
             "application/pdf",
             "application/x-pdf",
@@ -248,6 +247,7 @@ public class ScannerPreviewFragment extends Fragment {
             binding.pdfLoaded.setVisibility(View.VISIBLE);
             return;
         }
+        Log.e("TAG", "2: bitmaps: " + bitmaps.size());
         if (!bitmaps.isEmpty()) {
             binding.findCropPointsBtn.setEnabled(true);
             binding.optionContainer.setVisibility(View.VISIBLE);

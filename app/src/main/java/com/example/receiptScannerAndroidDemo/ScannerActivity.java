@@ -71,6 +71,7 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
                 ScannerPreviewFragment.pdfUri = null;
+                Log.e("TAG", "1: bitmaps: " + bitmaps.size());
                 ScannerPreviewFragment.bitmaps = bitmaps;
                 Intent in = new Intent(ctx, ScannerActivity.class);
                 in.putExtra("preview", true);
