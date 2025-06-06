@@ -49,6 +49,8 @@ android.useAndroidX=true
 android.enableJetifier=true
 ```
 
+ ### Supported Android versions
+- #### The recommended version of Android is 8 or higher (API level 26).
 
 ## Quickstart
 🔧 This is quick example of how to run scanner and send receipts to ourcart.
