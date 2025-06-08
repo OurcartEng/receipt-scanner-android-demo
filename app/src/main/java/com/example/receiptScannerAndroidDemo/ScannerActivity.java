@@ -55,46 +55,50 @@ public class ScannerActivity extends AppCompatActivity {
         Button configBtn = findViewById(R.id.config_btn);
         Button previewBtn = findViewById(R.id.preview_btn);
 
-        scannerConfig = new ReceiptScanner.ScannerConfig() {
-            @Override
-            public void onHelpClick(Context ctx) {
-                Log.e("TAG", "onHelpClick");
+        if (scannerConfig == null) {
+            scannerConfig = new ReceiptScanner.ScannerConfig() {
+                @Override
+                public void onHelpClick(Context ctx) {
+                    Log.e("TAG", "onHelpClick");
 
-                Toast.makeText(ScannerActivity.this,
-                        "onHelpClick",
-                        Toast.LENGTH_LONG).show();
+                    Toast.makeText(ScannerActivity.this,
+                            "onHelpClick",
+                            Toast.LENGTH_LONG).show();
 
-               // Intent in = new Intent(ctx, ScannerActivity.class);
-              //  startActivity(in);
-            }
+                    // Intent in = new Intent(ctx, ScannerActivity.class);
+                    //  startActivity(in);
+                }
 
-            @Override
-            public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
-                ScannerPreviewFragment.pdfUri = null;
-                Log.e("TAG", "1: bitmaps: " + bitmaps.size());
-                ScannerPreviewFragment.bitmaps = bitmaps;
-                Intent in = new Intent(ctx, ScannerActivity.class);
-                in.putExtra("preview", true);
-                startActivity(in);
-            }
+                @Override
+                public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
+                    ScannerPreviewFragment.pdfUri = null;
+                    Log.e("TAG", "1: bitmaps: " + bitmaps.size());
+                    ScannerPreviewFragment.bitmaps = bitmaps;
+                    Intent in = new Intent(ctx, ScannerActivity.class);
+                    in.putExtra("preview", true);
+                    startActivity(in);
+                }
 
-            @Override
-            public void onCloseClicked(Context ctx) {
-                Log.e("TAG", "onCloseClicked");
+                @Override
+                public void onCloseClicked(Context ctx) {
+                    Log.e("TAG", "onCloseClicked");
 
-                Intent in = new Intent(ctx, ScannerActivity.class);
-                startActivity(in);
-            }
+                    Intent in = new Intent(ctx, ScannerActivity.class);
+                    startActivity(in);
+                }
 
-            @Override
-            public void onEvent(ScannerEvent event) {
-                Log.e("TAG", "onEvent");
+                @Override
+                public void onEvent(ScannerEvent event) {
+                    Log.e("TAG", "onEvent");
 
-                Toast.makeText(ScannerActivity.this,
-                        "Event: " + event,
-                        Toast.LENGTH_LONG).show();
-            }
-        };
+                    Toast.makeText(ScannerActivity.this,
+                            "Event: " + event,
+                            Toast.LENGTH_LONG).show();
+                }
+            };
+        }
+
+
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_content_main);

@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +24,6 @@ import com.example.receiptScannerAndroidDemo.databinding.FragmentScannerConfigBi
 import com.github.dhaval2404.colorpicker.ColorPickerDialog;
 import com.github.dhaval2404.colorpicker.listener.ColorListener;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public class ScannerConfigFragment extends Fragment {
 
@@ -47,6 +42,8 @@ public class ScannerConfigFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setBooleanCheckbox(binding.showHelpIcon, ScannerActivity.uiSettings.showHelpIcon, (v, b) -> ScannerActivity.uiSettings.showHelpIcon = b);
+        setBooleanCheckbox(binding.checkLongReceiptOnSnapAutoMode, ScannerActivity.scannerConfig.checkLongReceiptOnSnapAutoMode, (v, b) -> ScannerActivity.scannerConfig.checkLongReceiptOnSnapAutoMode = b);
+        setBooleanCheckbox(binding.checkLongReceiptOnSnapManualMode, ScannerActivity.scannerConfig.checkLongReceiptOnSnapManualMode, (v, b) -> ScannerActivity.scannerConfig.checkLongReceiptOnSnapManualMode = b);
         setBooleanCheckbox(binding.showTargetBorder, ScannerActivity.uiSettings.showTargetBorder, (v, b) -> ScannerActivity.uiSettings.showTargetBorder = b);
         setBooleanCheckbox(binding.isRetakeMode, ScannerActivity.scannerConfig.isRetakeMode, (v, b) -> ScannerActivity.scannerConfig.isRetakeMode = b);
         setBooleanCheckbox(binding.isLongMode, ScannerActivity.scannerConfig.isLongMode, (v, b) -> ScannerActivity.scannerConfig.isLongMode = b);
@@ -75,6 +72,7 @@ public class ScannerConfigFragment extends Fragment {
         setFontSizeInput(binding.feedbackFontSize, ScannerActivity.uiSettings.feedbackFontSize, 14, val -> ScannerActivity.uiSettings.feedbackFontSize = val);
         setFontSizeInput(binding.capturingDuration, ScannerActivity.scannerConfig.capturingDuration, 2000, val -> ScannerActivity.scannerConfig.capturingDuration = val);
         setFontSizeInput(binding.switchToManualTimeout, ScannerActivity.scannerConfig.switchToManualTimeout, 10000, val -> ScannerActivity.scannerConfig.switchToManualTimeout = val);
+        setFontSizeInput(binding.imageTooLengthyRatio, (int) ScannerActivity.scannerConfig.imageTooLengthyRatio, 6, val -> ScannerActivity.scannerConfig.imageTooLengthyRatio = (float) val);
 
         int primaryColor = getResources().getColor(R.color.ourcartPrimaryColor);
         int textColor = getResources().getColor(R.color.ourcartTextColor);
@@ -201,12 +199,12 @@ public class ScannerConfigFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 String str = s.toString();
                 if (str.isEmpty()) {
-                    watcher.run(null);
+                    watcher.run(0);
                 } else {
                     try {
                         watcher.run(Integer.parseInt(str));
                     } catch (Exception e) {
-                        watcher.run(null);
+                        watcher.run(0);
                     }
                 }
             }
@@ -217,7 +215,7 @@ public class ScannerConfigFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-            };
+            }
         });
     }
 

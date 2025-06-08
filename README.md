@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.7.15")
+implementation("com.ourcart:receiptscanner:1.8.0")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -291,6 +291,13 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **isLongMode** (_boolean_)
   Should scanner be in "`Long receipt mode`" by default.
 
+- ### **checkLongReceiptOnSnapAutoMode** (_boolean_) (_default: true_)
+  Should check is the entire receipt is visible and not too lengthy during auto snap `Regular receipt mode`
+- ### **checkLongReceiptOnSnapManualMode** (_boolean_) (_default: true_)
+  Should check is the entire receipt is visible and not too lengthy during manual snap `Regular receipt mode`
+- ### **capturingDuration** (_int_) (_default: 2000_)
+  Ratio of height to width if more then that it will be considered too long for 1 picture. In `Regular receipt mode` it will display message and switch to `Long receipt mode` for if `checkLongReceiptOnSnapAutoMode` or `checkLongReceiptOnSnapManualMode` is set to true.
+
 - ### **capturingDuration** (_int_) (_default: 2000_)
   Time in milliseconds before image will be captured when valid receipt have been detected during automatic mode (time to get camera focus)
 - ### **switchToManualTimeout** (_int_) (_default: 10000_)
@@ -547,6 +554,7 @@ Add to your `strings.xml`
 
 All texts with default values in xml format:
 ```xml
+<string name="OURCART_long_receipt_detected">Long receipt detected,\n please take all parts of receipt separately it in up to 6 parts.</string>
 <string name="OURCART_adjust_angle">The angle is incorrect. Hold your camera directly above the receipt.</string>
 <string name="OURCART_move_closer">Move closer so more of the receipt will be in the picture.</string>
 <string name="OURCART_bad_lighting">Lighting is too low. Please move to a brighter area or turn on more lights.</string>
