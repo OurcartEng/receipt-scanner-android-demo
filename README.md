@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.8.0")
+implementation("com.ourcart:receiptscanner:1.8.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -291,9 +291,9 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 - ### **isLongMode** (_boolean_)
   Should scanner be in "`Long receipt mode`" by default.
 
-- ### **checkLongReceiptOnSnapAutoMode** (_boolean_) (_default: true_)
+- ### **checkLongReceiptOnSnapAutoMode** (_boolean_) (_default: false_)
   Should check is the entire receipt is visible and not too lengthy during auto snap `Regular receipt mode`
-- ### **checkLongReceiptOnSnapManualMode** (_boolean_) (_default: true_)
+- ### **checkLongReceiptOnSnapManualMode** (_boolean_) (_default: false_)
   Should check is the entire receipt is visible and not too lengthy during manual snap `Regular receipt mode`
 - ### **capturingDuration** (_int_) (_default: 2000_)
   Ratio of height to width if more then that it will be considered too long for 1 picture. In `Regular receipt mode` it will display message and switch to `Long receipt mode` for if `checkLongReceiptOnSnapAutoMode` or `checkLongReceiptOnSnapManualMode` is set to true.
