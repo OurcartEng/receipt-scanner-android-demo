@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.8.1")
+implementation("com.ourcart:receiptscanner:1.9.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -153,7 +153,7 @@ It requires ML model that needs to be downloaded. First run `preValidationInit` 
   Method that will update/download ML model used in validation, it will not block ability to validate on a old version of ML model, it is suggested to run this method early during startup of application.
   - #### Input:
     - **context** (_Context_)
-    - **requireWifi** (_boolean_) - if `true` the update/download will only be performed when WIFI on enabled, and on Error will be executed with `WifiDisabledException` 
+    - **config** (_PreInitValidationConfig_) - config for pre-init, it have 3 settings `apiKey`, `isProduction` and  `requireWifi`
     - **onModelAvailable** (_Consumer&lt;Boolean>_)(_Optional_) - Callback executed when updated is performed successfully or if it is not needed. It gets a boolean value that indicates has model been updated or not.
     - **onError** (_Consumer&lt;Exception>_)(_Optional_) - Callback executed when error occurred. 
   - #### Output:
@@ -161,9 +161,14 @@ It requires ML model that needs to be downloaded. First run `preValidationInit` 
 
 Example:
 ```java
+  ImageValidator.PreInitValidationConfig validationConfig = new ImageValidator.PreInitValidationConfig();
+  validationConfig.isProduction = false;
+  validationConfig.apiKey = Config.API_KEY);
+  validationConfig.requireWifi = true;
+
   ReceiptScanner.preValidationInit(
       getContext(),
-      true,
+      validationConfig,
       (hasUpdatePreformed) -> {
           Toast.makeText(
                 getContext(),
@@ -261,6 +266,22 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
     }
 }
 ```
+## PreInitValidationConfig documentation
+📌 `PreInitValidationConfig` instance of this class must me provided for `ReceiptScanner.preValidationInit`
+
+Example:
+```java
+ImageValidator.PreInitValidationConfig validationConfig = new ImageValidator.PreInitValidationConfig();
+validationConfig.isProduction = false;
+validationConfig.apiKey = "<api key>";
+validationConfig.requireWifi = true;
+```
+- ### **isProduction** (_boolean_)(_default: false_)
+  determine should be send to production or staging environment.
+- ### **apiKey** (_String_)
+  String required for client in order to access Ourcart api.
+- ### **requireWifi** (_string_)(_default: false_)
+  If `true` the update/download will only be performed when WIFI on enabled, and on Error will be executed with `WifiDisabledException`
 
 ## ApiConfig documentation
 📌 `ApiConfig` instance of this class must me provided to send files to Ourcart, all fields must me set:

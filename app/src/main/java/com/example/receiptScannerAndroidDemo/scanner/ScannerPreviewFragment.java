@@ -131,9 +131,14 @@ public class ScannerPreviewFragment extends Fragment {
                     Toast.LENGTH_LONG
             ).show();
 
+            ImageValidator.PreInitValidationConfig validationConfig = new ImageValidator.PreInitValidationConfig();
+            validationConfig.isProduction = false;
+            validationConfig.apiKey = "h7OKk8zjDt97b7k3XbP5t5NhvZYAOrPn6MqJWgil";
+            validationConfig.requireWifi = true;
+
             ReceiptScanner.preValidationInit(
                 getContext(),
-                true,
+                validationConfig,
                 (updatePreformed) -> {
                     Toast.makeText(
                             getContext(),
