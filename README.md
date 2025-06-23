@@ -316,10 +316,8 @@ After taking one picture activity will be finished and `onReceiptSnapped` will b
 
 - ### **checkLongReceiptOnSnapAutoMode** (_boolean_) (_default: false_)
   Should check is the entire receipt is visible and not too lengthy during auto snap `Regular receipt mode`
-- ### **checkLongReceiptOnSnapManualMode** (_boolean_) (_default: false_)
-  Should check is the entire receipt is visible and not too lengthy during manual snap `Regular receipt mode`
-- ### **capturingDuration** (_int_) (_default: 2000_)
-  Ratio of height to width if more then that it will be considered too long for 1 picture. In `Regular receipt mode` it will display message and switch to `Long receipt mode` for if `checkLongReceiptOnSnapAutoMode` or `checkLongReceiptOnSnapManualMode` is set to true.
+- ### **imageTooLengthyRatio** (_float_) (_default: 6_)
+  Ratio of height to width if more then that it will be considered too long for 1 picture. In `Regular receipt mode` it will display message and switch to `Long receipt mode` for if `checkLongReceiptOnSnapAutoMode` is set to true.
 
 - ### **capturingDuration** (_int_) (_default: 2000_)
   Time in milliseconds before image will be captured when valid receipt have been detected during automatic mode (time to get camera focus)
