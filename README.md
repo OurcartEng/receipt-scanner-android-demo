@@ -585,9 +585,9 @@ All texts with default values in xml format:
 <string name="OURCART_AUTO_MANUAL_ON">No receipt found.\n Capture manually.</string>
 <string name="OURCART_REGULAR_RECEIPT_MODE">Regular receipt mode</string>
 <string name="OURCART_LONG_RECEIPT_MODE">Long receipt mode</string>
-<string name="OURCART_regular_receipt_btn_automatic_mode">Regular Receipt</string>
+<string name="OURCART_regular_receipt_btn_automatic_mode">Regular Receipt automatic scan</string>
 <string name="OURCART_long_receipt_btn_automatic_mode">Long Receipt</string>
-<string name="OURCART_regular_receipt_btn_regular_mode">Regular Receipt</string>
+<string name="OURCART_regular_receipt_btn_regular_mode">Regular Receipt manual scan</string>
 <string name="OURCART_long_receipt_btn_regular_mode">Long Receipt</string>
 <string name="OURCART_next">Next</string>
 ```
