@@ -133,7 +133,7 @@ public class ScannerPreviewFragment extends Fragment {
 
             ImageValidator.PreInitValidationConfig validationConfig = new ImageValidator.PreInitValidationConfig();
             validationConfig.isProduction = false;
-            validationConfig.apiKey = "h7OKk8zjDt97b7k3XbP5t5NhvZYAOrPn6MqJWgil";
+            validationConfig.apiKey = Config.API_KEY;
             validationConfig.requireWifi = true;
 
             ReceiptScanner.preValidationInit(
@@ -218,24 +218,30 @@ public class ScannerPreviewFragment extends Fragment {
                     throw new RuntimeException(e);
                 } catch (FileService.FileSizeException e) {
                     throw new RuntimeException(e);
+                } catch (ReceiptScanner.MissingConfigException e) {
+                    throw new RuntimeException(e);
                 }
                 return;
             }
             if (!bitmaps.isEmpty()) {
                 v.setEnabled(false);
-                ReceiptScanner.sendReceipt(bitmaps, apiConfig).thenAccept(edgeData -> {
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Receipt sended", Toast.LENGTH_LONG).show();
-                        v.setEnabled(true);
-                    });
-                }).exceptionally((e) -> {
+                try {
+                    ReceiptScanner.sendReceipt(bitmaps, apiConfig).thenAccept(edgeData -> {
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Receipt sended", Toast.LENGTH_LONG).show();
+                            v.setEnabled(true);
+                        });
+                    }).exceptionally((e) -> {
 
-                    getActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                        v.setEnabled(true);
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            v.setEnabled(true);
+                        });
+                        return null;
                     });
-                    return null;
-                });
+                } catch (ReceiptScanner.MissingConfigException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -393,15 +399,8 @@ public class ScannerPreviewFragment extends Fragment {
         @NonNull
         @Override
         public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-             StringBuilder sb = new StringBuilder();
-             sb.append("hasNoText: " + validationResult.hasNoText + "\n");
-             sb.append("noDate: " + validationResult.noDate + "\n");
-             sb.append("noTime: " + validationResult.noTime + "\n");
-             sb.append("noRetailer: " + validationResult.noRetailer + "\n");
-             sb.append("noTotal: " + validationResult.noTotal + "\n");
-
             return new AlertDialog.Builder(requireContext())
-                    .setMessage(sb.toString())
+                    .setMessage(validationResult.toString())
                     .setPositiveButton("Close", (dialog, which) -> {
                         getDialog().dismiss();
                     })

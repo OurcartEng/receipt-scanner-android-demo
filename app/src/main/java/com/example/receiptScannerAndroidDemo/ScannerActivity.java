@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.receiptScannerAndroidDemo.config.Config;
 import com.example.receiptScannerAndroidDemo.scanner.ScannerPreviewFragment;
 import com.ourcart.receiptscanner.ReceiptScanner;
 import com.ourcart.receiptscanner.enums.ScannerEvent;
@@ -96,6 +97,11 @@ public class ScannerActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
             };
+
+            scannerConfig.apiKey = Config.API_KEY;
+            scannerConfig.clientCountry = Config.COUNTRY_CODE;
+            scannerConfig.clientCode = Config.CLIENT_CODE;
+            scannerConfig.clientUserId = Config.CLIENT_USER_ID;
         }
 
 
@@ -123,7 +129,11 @@ public class ScannerActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.scanner_btn).setOnClickListener(v -> {
-            ReceiptScanner.startScanner(ScannerActivity.this, uiSettings, scannerConfig);
+            try {
+                ReceiptScanner.startScanner(ScannerActivity.this, uiSettings, scannerConfig);
+            } catch (ReceiptScanner.MissingConfigException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         previewBtn.setOnClickListener(v -> {

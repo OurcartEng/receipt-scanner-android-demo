@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.9.1")
+implementation("com.ourcart:receiptscanner:1.9.2")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -84,7 +84,16 @@ ReceiptScanner.ScannerConfig scannerConfig = new ReceiptScanner.ScannerConfig() 
   }
 };
 
-ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
+scannerConfig.apiKey = apiConfig.apiKey;
+scannerConfig.clientCode = apiConfig.clientCountry;
+scannerConfig.clientCountry = apiConfig.clientCode;
+scannerConfig.clientUserId = apiConfig.clientUserId;
+
+try {
+  ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
+} catch (ReceiptScanner.MissingConfigException e) {
+  e.printStackTrace();
+}
 ```
 
 
@@ -99,6 +108,8 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
   - #### Output:
     - void
+  - #### Throws:
+    - `MissingConfigException` - thrown if any of required config params is missing in `scannerConfig` input (apiKey, clientCode, clientCountry and clientUserId).
 
 ## 📤 ReceiptScanner sendReceipts
 - ### ReceiptScanner.sendReceipt - bitmaps
@@ -108,6 +119,8 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - **apiConfig** (_ApiConfig_) - config specific for a client
   - #### Output:
     - **CompletableFuture &lt;Boolean>** - if the `CompletableFuture` is completed `exceptionally` the Exception is passed, it will contains message from server in case of HTTP request error.
+  - #### Throws:
+    - `MissingConfigException` - thrown if any of config params is missing in `apiConfig` input.
 
 - ### ReceiptScanner.sendReceipt - pdf
   Send **pdf** to ourcart.
@@ -121,6 +134,7 @@ ReceiptScanner.startScanner(getContext(), uiSettings, scannerConfig);
     - `FileTypeException` - thrown if file is not a pdf
     - `FileSizeException` - thrown if file is over 12 MB
     - `IOException` - thrown if file cannot be read
+    - `MissingConfigException` - thrown if any of config params is missing in `apiConfig` input.
 
 ## ✂️Edge Detection & Cropping
 - ### ReceiptScanner.getEdgePointsData
@@ -200,7 +214,7 @@ Example:
     - **context** (_Context_)
     - **bitmaps** (_List&lt;Bitmap>_)
   - #### Output:
-    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `noRetailer`, `noDate`, `noTime` and `noTotal`
+    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `recognizedText`, `retailerFound`, `dateFound`, `timeFound` and `receiptTotalFound`
   - #### Throws:
     - `ModelUnavailableException` - thrown if ML model is not available
 
@@ -210,12 +224,13 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
     try {
         v.setEnabled(false);
         ReceiptScanner.validateReceipt(getContext(), bitmaps)
-                .thenAccept((results) -> {
+                .thenAccept((validationResult) -> {
                      StringBuilder sb = new StringBuilder();
-                     sb.append("noDate: " + validationResult.noDate + "\n");
-                     sb.append("noTime: " + validationResult.noTime + "\n");
-                     sb.append("noRetailer: " + validationResult.noRetailer + "\n");
-                     sb.append("noTotal: " + validationResult.noTotal + "\n");
+                     sb.append("recognizedText: " + validationResult.recognizedText + "\n");
+                     sb.append("retailerFound: " + validationResult.retailerFound + "\n");
+                     sb.append("dateFound: " + validationResult.dateFound + "\n");
+                     sb.append("timeFound: " + validationResult.timeFound + "\n");
+                     sb.append("receiptTotalFound: " + validationResult.receiptTotalFound + "\n");
 
                      Log.i(TAG, sb.toString());
                 });
@@ -231,7 +246,7 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
     - **context** (_Context_)
     - **pdfFileUri** (_Uri_)
   - #### Output:
-    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `hasNoText`, `noRetailer`, `noDate`, `noTime` and `noTotal`
+    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `recognizedText`, `retailerFound`, `dateFound`, `timeFound` and `receiptTotalFound`
   - #### Throws:
     - `ModelUnavailableException` - thrown if ML model is not available
     - `FileTypeException` - thrown if file is not a pdf
@@ -246,11 +261,11 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
         ReceiptScanner.validateReceipt(getContext(), pdfUri)
                 .thenAccept((validationResult) -> {
                      StringBuilder sb = new StringBuilder();
-                     sb.append("hasNoText: " + validationResult.hasNoText + "\n");
-                     sb.append("noDate: " + validationResult.noDate + "\n");
-                     sb.append("noTime: " + validationResult.noTime + "\n");
-                     sb.append("noRetailer: " + validationResult.noRetailer + "\n");
-                     sb.append("noTotal: " + validationResult.noTotal + "\n");
+                     sb.append("recognizedText: " + validationResult.recognizedText + "\n");
+                     sb.append("retailerFound: " + validationResult.retailerFound + "\n");
+                     sb.append("dateFound: " + validationResult.dateFound + "\n");
+                     sb.append("timeFound: " + validationResult.timeFound + "\n");
+                     sb.append("receiptTotalFound: " + validationResult.receiptTotalFound + "\n");
 
                      Log.i(TAG, sb.toString());
                 });
@@ -284,7 +299,7 @@ validationConfig.requireWifi = true;
   If `true` the update/download will only be performed when WIFI on enabled, and on Error will be executed with `WifiDisabledException`
 
 ## ApiConfig documentation
-📌 `ApiConfig` instance of this class must me provided to send files to Ourcart, all fields must me set:
+📌 `ApiConfig` instance of this class must me provided to send files to Ourcart, all fields must me set failing to do so will throw exception.
 
 Example:
 ```java
@@ -308,6 +323,9 @@ apiConfig.clientUserId = Config.CLIENT_USER_ID;
 
 ## ScannerConfig documentation
 ⚙️ `ScannerConfig` instance of this class must me provided to handle user interactions and output from scanner Activity.
+
+**IT EXTENDS `ApiConfig` AND REQUIRED TO SET: apiKey, clientCountry, clientCode, clientUserId**
+
 - ### **isRetakeMode** (_boolean_)
   Set to `true` if you want scanner to be in "Retake mode", it is for retaking one picture without automatic capturing and ability to change the mode to "long receipt".
 After taking one picture activity will be finished and `onReceiptSnapped` will be executed.
