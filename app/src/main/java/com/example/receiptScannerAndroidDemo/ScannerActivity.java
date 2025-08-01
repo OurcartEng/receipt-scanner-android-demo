@@ -56,6 +56,13 @@ public class ScannerActivity extends AppCompatActivity {
         Button configBtn = findViewById(R.id.config_btn);
         Button previewBtn = findViewById(R.id.preview_btn);
 
+        Button csvImportButton = findViewById(R.id.csv_import_btn);
+        csvImportButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CSVImportActivity.class);
+            startActivity(intent);
+        });
+
+
         if (scannerConfig == null) {
             scannerConfig = new ReceiptScanner.ScannerConfig() {
                 @Override

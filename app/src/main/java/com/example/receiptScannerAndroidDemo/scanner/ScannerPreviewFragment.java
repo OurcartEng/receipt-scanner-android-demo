@@ -159,6 +159,8 @@ public class ScannerPreviewFragment extends Fragment {
             });
         });
 
+
+
         ValidationResultsFragment newFragment = new ValidationResultsFragment();
         binding.validateBtn.setOnClickListener(v -> {
             if (pdfUri != null) {
