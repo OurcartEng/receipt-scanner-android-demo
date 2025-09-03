@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ImageDecoder;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,7 +22,6 @@ import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -323,17 +320,6 @@ public class ScannerPreviewFragment extends Fragment {
                 documentFile.getName().toLowerCase().endsWith(".pdf");
     }
 
-    private Bitmap getBitmapFromURI(Uri uri) throws IOException {
-        Bitmap bitmap;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            bitmap = ImageDecoder.decodeBitmap(ImageDecoder.createSource(requireContext().getContentResolver(), uri));
-        } else {
-            bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
-        }
-        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        return bitmap;
-    }
-
     private ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -355,7 +341,7 @@ public class ScannerPreviewFragment extends Fragment {
                                     Uri fileUri = data.getClipData().getItemAt(i).getUri();
 
                                     if (isImage(fileUri)) {
-                                        Bitmap bitmap = getBitmapFromURI(fileUri);
+                                        Bitmap bitmap = FileService.getBitmapFromUri(requireActivity().getApplicationContext(), fileUri);
                                         bitmaps.add(bitmap);
                                     } else if (isPdf(fileUri)) {
                                         bitmaps.clear();
@@ -370,7 +356,7 @@ public class ScannerPreviewFragment extends Fragment {
                                     return;
                                 }
                                 if (isImage(fileUri)) {
-                                    Bitmap bitmap = getBitmapFromURI(fileUri);
+                                    Bitmap bitmap = FileService.getBitmapFromUri(requireActivity().getApplicationContext(), fileUri);
                                     bitmaps.add(bitmap);
                                 } else if (isPdf(fileUri)) {
                                     pdfUri = fileUri;
