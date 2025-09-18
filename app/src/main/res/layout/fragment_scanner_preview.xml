@@ -38,6 +38,12 @@
                 android:text="Find crop points"/>
 
             <Button
+                android:id="@+id/crop_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crop"/>
+
+            <Button
                 android:id="@+id/send_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

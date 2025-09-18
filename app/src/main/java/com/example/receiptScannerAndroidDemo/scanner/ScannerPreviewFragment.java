@@ -114,11 +114,21 @@ public class ScannerPreviewFragment extends Fragment {
                         ));
 
                         float ratio = (float) cropPointsView.getWidth() / ed.bitmap.getWidth();
+
+                        // Debug EdgeData borderPoints
+                        Log.d("EdgeDetection", "EdgeData borderPoints for image " + i + ":");
+                        for (Map.Entry<Integer, PointF> entry : ed.borderPoints.entrySet()) {
+                            PointF point = entry.getValue();
+                            Log.d("EdgeDetection", "  Key " + entry.getKey() + ": (" + point.x + "," + point.y + ")");
+                        }
+
                         cropPointsView.setPoints(ed.borderPoints, ratio);
 
                         i++;
                     }
 
+                    binding.findCropPointsBtn.setEnabled(true);
+                    binding.cropBtn.setEnabled(true);
                 });
             }
         });
@@ -200,6 +210,158 @@ public class ScannerPreviewFragment extends Fragment {
         apiConfig.clientCode = Config.CLIENT_CODE;
         apiConfig.clientUserId = Config.CLIENT_USER_ID;
 
+        binding.cropBtn.setOnClickListener(v -> {
+            if (!bitmaps.isEmpty()) {
+                v.setEnabled(false);
+                Log.d("CropButton", "Starting crop operation for " + bitmaps.size() + " images");
+
+                try {
+                    LinearLayout previewScroll = binding.previewScroll;
+                    if (previewScroll == null) {
+                        Toast.makeText(getContext(), "Preview not available", Toast.LENGTH_SHORT).show();
+                        v.setEnabled(true);
+                        return;
+                    }
+
+                    for (int i = 0; i < bitmaps.size(); i++) {
+                        Log.d("CropButton", "Processing image " + (i + 1) + " of " + bitmaps.size());
+
+                        if (i >= previewScroll.getChildCount()) {
+                            Log.w("CropButton", "No more child views available for image " + i);
+                            break;
+                        }
+
+                        View child = previewScroll.getChildAt(i);
+                        if (!(child instanceof ConstraintLayout)) {
+                            Log.w("CropButton", "Child " + i + " is not a ConstraintLayout");
+                            continue;
+                        }
+
+                        ConstraintLayout constraintLayout = (ConstraintLayout) child;
+                        if (constraintLayout.getChildCount() < 2) {
+                            Log.w("CropButton", "ConstraintLayout " + i + " has less than 2 children");
+                            continue;
+                        }
+
+                        View cropView = constraintLayout.getChildAt(1);
+                        if (!(cropView instanceof CropPointsView)) {
+                            Log.w("CropButton", "Second child of ConstraintLayout " + i + " is not CropPointsView");
+                            continue;
+                        }
+
+                        CropPointsView cropPointsView = (CropPointsView) cropView;
+                        Log.d("CropButton", "Found CropPointsView for image " + i + ", borderPoints size: " +
+                            (cropPointsView.borderPoints != null ? cropPointsView.borderPoints.size() : "null"));
+
+                        if (cropPointsView.borderPoints != null && cropPointsView.borderPoints.size() >= 4) {
+                            // Convert the points to the format expected by cropBitmap
+                            Map<Integer, PointF> cropPoints = new HashMap<>();
+                            float ratio = (float) cropPointsView.getWidth() / bitmaps.get(i).getWidth();
+                            Log.d("CropButton", "Image " + i + " ratio: " + ratio + ", view width: " + cropPointsView.getWidth() + ", bitmap width: " + bitmaps.get(i).getWidth());
+
+                            // Try clockwise order: top-left, top-right, bottom-right, bottom-left
+                            // cropBitmap might expect: 1=top-left, 2=top-right, 3=bottom-right, 4=bottom-left
+                            if (cropPointsView.borderPoints.containsKey(0)) { // top-left
+                                PointF point = cropPointsView.borderPoints.get(0);
+                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
+                                cropPoints.put(1, originalPoint);
+                                Log.d("CropButton", "Mapped top-left: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
+                            }
+                            if (cropPointsView.borderPoints.containsKey(1)) { // top-right
+                                PointF point = cropPointsView.borderPoints.get(1);
+                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
+                                cropPoints.put(2, originalPoint);
+                                Log.d("CropButton", "Mapped top-right: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
+                            }
+                            if (cropPointsView.borderPoints.containsKey(3)) { // bottom-right (swap with bottom-left)
+                                PointF point = cropPointsView.borderPoints.get(3);
+                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
+                                cropPoints.put(3, originalPoint);
+                                Log.d("CropButton", "Mapped bottom-right: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
+                            }
+                            if (cropPointsView.borderPoints.containsKey(2)) { // bottom-left (swap with bottom-right)
+                                PointF point = cropPointsView.borderPoints.get(2);
+                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
+                                cropPoints.put(4, originalPoint);
+                                Log.d("CropButton", "Mapped bottom-left: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
+                            }
+
+                            // Only crop if we have all 4 points
+                            if (cropPoints.size() == 4) {
+                                Log.d("CropButton", "Attempting to crop image " + i + " with 4 points");
+                                Bitmap originalBitmap = bitmaps.get(i);
+                                Log.d("CropButton", "Original bitmap size: " + originalBitmap.getWidth() + "x" + originalBitmap.getHeight());
+
+                                // Debug the actual Map contents and validate all points
+                                Log.d("CropButton", "cropPoints Map contents:");
+                                boolean allPointsValid = true;
+                                for (Map.Entry<Integer, PointF> entry : cropPoints.entrySet()) {
+                                    PointF point = entry.getValue();
+                                    if (point == null) {
+                                        Log.e("CropButton", "  Key " + entry.getKey() + ": NULL - INVALID!");
+                                        allPointsValid = false;
+                                    } else {
+                                        Log.d("CropButton", "  Key " + entry.getKey() + ": (" + point.x + "," + point.y + ")");
+                                    }
+                                }
+
+                                // Validate that we have exactly keys 1,2,3,4 with non-null points
+                                for (int key = 1; key <= 4; key++) {
+                                    if (!cropPoints.containsKey(key) || cropPoints.get(key) == null) {
+                                        Log.e("CropButton", "Missing or null point for key " + key);
+                                        allPointsValid = false;
+                                    }
+                                }
+
+                                if (!allPointsValid) {
+                                    Log.e("CropButton", "Skipping crop due to invalid points");
+                                    continue;
+                                }
+
+                                // Create a completely fresh Map with new PointF objects to avoid any reference issues
+                                Map<Integer, PointF> safeCropPoints = new HashMap<>();
+                                for (Map.Entry<Integer, PointF> entry : cropPoints.entrySet()) {
+                                    PointF originalPoint = entry.getValue();
+                                    safeCropPoints.put(entry.getKey(), new PointF(originalPoint.x, originalPoint.y));
+                                }
+
+                                Log.d("CropButton", "Created safe cropPoints map with fresh PointF objects");
+
+
+                                try {
+                                    Bitmap croppedBitmap = ReceiptScanner.cropBitmap(bitmaps.get(i), safeCropPoints);
+                                    if (croppedBitmap != null) {
+                                        Log.d("CropButton", "Successfully cropped image " + i + " to size: " + croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
+                                        bitmaps.set(i, croppedBitmap);
+                                    } else {
+                                        Log.e("CropButton", "Failed to crop image " + i + " - cropBitmap returned null");
+                                    }
+                                } catch (Exception cropException) {
+                                    Log.e("CropButton", "Exception during cropBitmap for image " + i + ": " + cropException.getMessage(), cropException);
+                                }
+                            } else {
+                                Log.w("CropButton", "Skipping crop for image " + i + " - only have " + cropPoints.size() + " points instead of 4");
+                            }
+                        }
+                    }
+
+                    getActivity().runOnUiThread(() -> {
+                        Log.d("CropButton", "Crop operation completed, refreshing view");
+                        updateView();
+                        v.setEnabled(true);
+                        Toast.makeText(getContext(), "Images cropped successfully", Toast.LENGTH_SHORT).show();
+                    });
+
+                } catch (Exception e) {
+                    Log.e("ScannerPreviewFragment", "Error cropping images", e);
+                    getActivity().runOnUiThread(() -> {
+                        v.setEnabled(true);
+                        Toast.makeText(getContext(), "Error cropping images: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+                }
+            }
+        });
+
         binding.sendBtn.setOnClickListener(v -> {
             if (pdfUri != null) {
                 v.setEnabled(false);
@@ -254,6 +416,7 @@ public class ScannerPreviewFragment extends Fragment {
 
         if (pdfUri != null) {
             binding.findCropPointsBtn.setEnabled(false);
+            binding.cropBtn.setEnabled(false);
             binding.optionContainer.setVisibility(View.VISIBLE);
             binding.imageLayout.setVisibility(View.GONE);
             binding.nodataMessage.setVisibility(View.GONE);
@@ -263,6 +426,7 @@ public class ScannerPreviewFragment extends Fragment {
         Log.e("TAG", "2: bitmaps: " + bitmaps.size());
         if (!bitmaps.isEmpty()) {
             binding.findCropPointsBtn.setEnabled(true);
+            binding.cropBtn.setEnabled(false);
             binding.optionContainer.setVisibility(View.VISIBLE);
             binding.imageLayout.setVisibility(View.VISIBLE);
             binding.nodataMessage.setVisibility(View.GONE);
@@ -411,7 +575,7 @@ public class ScannerPreviewFragment extends Fragment {
     }
 
     public static class CropPointsView extends FrameLayout {
-        private Map<Integer, PointF> borderPoints = new HashMap<>();
+        public Map<Integer, PointF> borderPoints = new HashMap<>();
         private final Paint mPaint = new Paint();
 
         public CropPointsView(Context context) {
