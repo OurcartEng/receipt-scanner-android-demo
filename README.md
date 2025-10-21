@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.8.4")
+implementation("com.ourcart:receiptscanner:1.10.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -62,18 +62,20 @@ apiConfig.clientCountry = "US";
 apiConfig.clientCode = "<client code>";
 apiConfig.clientUserId = "cab123";
 
-ReceiptScanner.ScannerConfig scannerConfig = new ReceiptScanner.ScannerConfig() {
+ReceiptScanner.ScannerUriConfig scannerConfig = new ReceiptScanner.ScannerUriConfig() {
   @Override
   public void onHelpClick(Context ctx) {
     Log.e("TAG", "onHelpClick");
   }
 
   @Override
-  public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
-    ReceiptScanner.sendReceipt(bitmaps, apiConfig).thenAccept(edgeData -> {
+  public void onReceiptSnapped(List<Uri> resultUris, Context ctx) {
+    ReceiptScanner.sendReceipt(getContext(), resultUris, apiConfig).thenAccept(edgeData -> {
       Log.e("TAG", "Files sent");
+      ReceiptScanner.clearCache(context);
     }).exceptionally((e) -> {
       Log.e("TAG", "error");
+      ReceiptScanner.clearCache(context);
       return null;
     });
   }
@@ -100,12 +102,24 @@ try {
 ## ReceiptScanner documentation
 `ReceiptScanner` have static methods that can allow you to run scanner, validate, get corner points, and send receipt to Ourcart backend API:
 
+- ### ReceiptScanner.startScanner: **(Deprecated)**
+  Starts scanner activity  
+  **Note:** This method is deprecated. Please use the overload that accepts `ScannerUriConfig` instead.
+  - #### Input:
+    - **context** (_Context_) - current context
+    - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
+    - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
+  - #### Output:
+    - void
+  - #### Throws:
+    - `MissingConfigException` - thrown if any of required config params is missing in `scannerConfig` input (apiKey, clientCode, clientCountry and clientUserId).
+
 - ### ReceiptScanner.startScanner:
   Starts scanner activity
   - #### Input:
     - **context** (_Context_) - current context
     - **uiSettings** (_UISettings_)(Optional) - instance with changes to Ui, color, fonts, text sizes, and icons for every place
-    - **scannerConfig** (_ScannerConfig_) - instance with methods for handling user interactions and default mode
+    - **scannerConfig** (_ScannerUriConfig_) - instance with methods for handling user interactions and default mode
   - #### Output:
     - void
   - #### Throws:
@@ -122,6 +136,18 @@ try {
   - #### Throws:
     - `MissingConfigException` - thrown if any of config params is missing in `apiConfig` input.
 
+- ### ReceiptScanner.sendReceipt - uris
+  Send **multiple image URIs** to Ourcart.
+  - #### Input:
+    - **context** (_Context_) - current context
+    - **uris** (_List<Uri>_) - list of image URIs, max 6
+    - **apiConfig** (_ApiConfig_) - config specific for a client
+  - #### Output:
+    - **CompletableFuture &lt;Boolean>** - if the `CompletableFuture` is completed `exceptionally` the Exception is passed, it will contain a message from the server in case of an HTTP request error.
+  - #### Throws:
+    - `MissingConfigException` - thrown if any of config params is missing in `apiConfig` input.
+    - `FileTypeException` - thrown if any of the URIs is not an image or an unsupported file type.
+
 - ### ReceiptScanner.sendReceipt - pdf
   Send **pdf** to ourcart.
   - #### Input:
@@ -135,6 +161,16 @@ try {
     - `FileSizeException` - thrown if file is over 12 MB
     - `IOException` - thrown if file cannot be read
     - `MissingConfigException` - thrown if any of config params is missing in `apiConfig` input.
+
+## 🧹 ReceiptScanner Cache Management
+- ### ReceiptScanner.clearCache
+  Clears the ReceiptScanner's internal cache, removing files that may have been stored during previous operations.
+  - #### Input:
+    - **context** (_Context_) - current context
+  - #### Output:
+    - void
+  - #### Usage:
+    Call this static method when you want to manually clear cached data created by the scanner.
 
 ## ✂️Edge Detection & Cropping
 - ### ReceiptScanner.getEdgePointsData
@@ -321,8 +357,42 @@ apiConfig.clientUserId = Config.CLIENT_USER_ID;
 - ### **clientUserId** (_string_)
   id of client to be sent and associated with receipts, it can be any string but have it be a real string associated with currently logged in user, it will help us block fraudulent users and will provide consistent data.
 
-## ScannerConfig documentation
-⚙️ `ScannerConfig` instance of this class must me provided to handle user interactions and output from scanner Activity.
+## ScannerUriConfig documentation
+✨ `ScannerUriConfig` is the recommended configuration class for new integrations. It provides improved handling of user interactions and output from the scanner Activity, and supports returning image URIs instead of Bitmaps for better memory efficiency.
+
+**IT EXTENDS `ApiConfig` AND REQUIRES TO SET: apiKey, clientCountry, clientCode, clientUserId**
+
+- ### **isRetakeMode** (_boolean_)
+  Set to `true` if you want the scanner to be in "Retake mode", which is for retaking one picture without automatic capturing and with the ability to change the mode to "long receipt".
+  After taking one picture, the activity will finish and `onReceiptSnapped` will be executed.
+- ### **isLongMode** (_boolean_)
+  Should the scanner be in "`Long receipt mode`" by default.
+
+- ### **checkLongReceiptOnSnapAutoMode** (_boolean_) (_default: false_)
+  Should check if the entire receipt is visible and not too lengthy during auto snap in `Regular receipt mode`.
+- ### **imageTooLengthyRatio** (_float_) (_default: 6_)
+  Ratio of height to width; if more than this, it will be considered too long for one picture. In `Regular receipt mode`, it will display a message and switch to `Long receipt mode` if `checkLongReceiptOnSnapAutoMode` is set to true.
+
+- ### **capturingDuration** (_int_) (_default: 2000_)
+  Time in milliseconds before the image will be captured when a valid receipt has been detected during automatic mode (time to get camera focus).
+- ### **switchToManualTimeout** (_int_) (_default: 10000_)
+  Time in milliseconds before the app will switch to "manual capturing" if no receipt is detected in automatic mode for regular receipts.
+- ### **enableAutomaticMode** (_boolean_)
+  Should Automatic Mode be enabled for `Regular receipt mode`.
+- ### **validateAngle** (_boolean_)
+  Should angle be checked.
+
+🔧 Callback methods
+- ### **onHelpClick** (_(Context ctx) -> void_)
+  Callback method executed by clicking on the "help" icon in the top right; provides access to the current context.
+- ### **onCloseClicked** (_(Context ctx) -> void_)
+  Callback method executed by clicking on the "Close" icon in the top left; provides access to the current context.
+- ### **onReceiptSnapped** (_(List<Uri> resultUris, Context ctx) -> void_)
+  Callback method executed when clicking on the "`Next`" button in "`Long receipt mode`", or taking a single picture in "`Regular mode`" either by `auto` or `manual` capture. Returns a list of image URIs.
+- ### **onEvent** (_(ScannerEvent event) -> void_)
+  Callback executed on user events; receives the enum of events:
+- ### **forcedLocale** (_Locale_) (_Optional_)
+  If set, forces the scanner UI to use the specified `Locale` for all texts and formatting, regardless of the device's current locale. This is useful for overriding language dynamically in your app. If not set, the device's default locale will be used.
 
 **IT EXTENDS `ApiConfig` AND REQUIRED TO SET: apiKey, clientCountry, clientCode, clientUserId**
 
@@ -608,8 +678,108 @@ All texts with default values in xml format:
 <string name="OURCART_regular_receipt_btn_regular_mode">Regular Receipt manual scan</string>
 <string name="OURCART_long_receipt_btn_regular_mode">Long Receipt</string>
 <string name="OURCART_next">Next</string>
+<string name="OURCART_accessibility_close">Close camera</string>
+<string name="OURCART_accessibility_flashlight">Flashlight</string>
+<string name="OURCART_accessibility_help">Instructions</string>
+<string name="OURCART_accessibility_snap">Camera button</string>
+<string name="OURCART_accessibility_preview">Image preview</string>
 ```
 
 #### In the text there are tags similar to html ones:
 - `<b>` - make the text bold, also add attribute to string `formatted="false"` may not work without it
 - `<u>` - add underline to text
+
+## 🔄 Migration from 1.8 to 1.10
+
+This section describes how to migrate your integration of the ReceiptScanner library from version 1.8 to 1.10, focusing on sending URIs and the use of `onReceiptSnapped` with `Uri`s.
+
+### 1. Use `ScannerUriConfig` Instead of Deprecated `ScannerConfig`
+
+The method `ReceiptScanner.startScanner(Context, UISettings, ScannerConfig)` is **deprecated** as of 1.10.  
+You should migrate to the new method signature that uses `ScannerUriConfig`—this is required for properly handling receipt images via URIs.
+
+**Before (v1.8 Deprecated usage):**
+```java
+// Deprecated config and signature
+ReceiptScanner.ScannerConfig scannerConfig = new ReceiptScanner.ScannerConfig() {
+  @Override
+  public void onHelpClick(Context ctx) {
+        // Handle help click
+  }
+
+  @Override
+  public void onReceiptSnapped(List<Bitmap> bitmaps, Context ctx) {
+        // Handle snapped bitmaps
+  }
+
+  @Override
+  public void onCloseClicked(Context ctx) {
+        // Handle close action
+  }
+};
+// ...set config fields...
+ReceiptScanner.startScanner(context, uiSettings, scannerConfig);
+```
+
+**After (v1.10+):**
+```java
+ReceiptScanner.ScannerUriConfig scannerConfig = new ReceiptScanner.ScannerUriConfig() {
+    @Override
+    public void onHelpClick(Context ctx) {
+        // Handle help click
+    }
+
+    @Override
+    public void onReceiptSnapped(List<Uri> resultUris, Context ctx) {
+        // Handle snapped URIs
+    }
+
+    @Override
+    public void onCloseClicked(Context ctx) {
+        // Handle close action
+    }
+};
+
+ReceiptScanner.startScanner(context, uiSettings, scannerConfig);
+```
+
+### 2. Sending image URIs with `sendReceipt`
+
+To send a list of image `Uri`s to the backend, call `ReceiptScanner.sendReceipt` with your context, the list of URIs, and your `ApiConfig`:
+
+```java
+// Before (v1.8 or earlier)
+ReceiptScanner.sendReceipt(getContext(), resultUris, apiConfig).thenAccept(edgeData -> {
+  // Success - files sent
+}).exceptionally((e) -> {
+  // Error - handle exception or notify user
+  return null;
+});
+
+// After (v1.10+)
+ReceiptScanner.sendReceipt(context, uris, apiConfig)
+    .thenAccept(result -> {
+        // Success - files sent
+    }).exceptionally(e -> {
+        // Error - handle exception or notify user
+        return null;
+    });
+```
+
+### 3. Clearing Temporary Cache
+
+Call `ReceiptScanner.clearCache(context)` to free up storage when your app no longer needs receipt files (for example, after uploading or processing). 
+
+Example:
+```java
+ReceiptScanner.clearCache(context);
+```
+
+
+**Summary:**  
+- Replace deprecated `ScannerConfig` and `startScanner` with `ScannerUriConfig`.
+- Implement `onReceiptSnapped(List<Uri> resultUris, Context ctx)` to receive and handle receipt images as URIs.
+- Send the received URIs using `ReceiptScanner.sendReceipt(context, uris, apiConfig)`.
+- Clear cache with `ReceiptScanner.clearCache(context)` when the files are no longer needed to free up storage.
+
+For more details, see the full documentation above.

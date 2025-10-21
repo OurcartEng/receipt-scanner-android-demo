@@ -4,7 +4,7 @@
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.3.1")
+implementation("com.ourcart:receiptscanner:1.10.1")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -462,6 +462,11 @@ All texts with default values in xml format:
 <string name="OURCART_tutorial_5" formatted="false">Please <b>do not write</b> \non the receipt.</string>
 <string name="OURCART_tutorial_6" formatted="false">We support common \n<b>image formats:</b> \nPDF, JPG, JPEG, PNG, GIF.</string>
 <string name="OURCART_tutorial_7" formatted="false">If your receipt is digital,\n please make sure to\n <b>download it first</b> to your\n device, and then upload.</string>
+<string name="OURCART_accessibility_close">Close camera</string>
+<string name="OURCART_accessibility_flashlight">Flashlight</string>
+<string name="OURCART_accessibility_help">Instructions</string>
+<string name="OURCART_accessibility_snap">Camera button</string>
+<string name="OURCART_accessibility_preview">Image preview</string>
 ```
 
 #### In the text there are tags similar to html ones:
