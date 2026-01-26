@@ -1,6 +1,3 @@
-include(":receiptScanner")
-project(":receiptScanner").projectDir = file("../android-receipt-scanner/receiptScanner")
-
 pluginManagement {
     repositories {
         google {
