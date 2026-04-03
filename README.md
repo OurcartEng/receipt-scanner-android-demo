@@ -246,7 +246,7 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
     - **context** (_Context_)
     - **pdfFileUri** (_Uri_)
   - #### Output:
-    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `recognizedText`, `retailerFound`, `dateFound`, `timeFound` and `receiptTotalFound`
+    - CompletableFuture<ImageValidator.ValidationResult> - ValidationResult contains fields `recognizedText`, `retailerFound`, `dateFound`, `timeFound`, `oldReceipt`, `isDuplicate` and `receiptTotalFound`
   - #### Throws:
     - `ModelUnavailableException` - thrown if ML model is not available
     - `FileTypeException` - thrown if file is not a pdf
@@ -265,6 +265,8 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
                      sb.append("retailerFound: " + validationResult.retailerFound + "\n");
                      sb.append("dateFound: " + validationResult.dateFound + "\n");
                      sb.append("timeFound: " + validationResult.timeFound + "\n");
+                     sb.append("isDuplicate: " + validationResult.isDuplicate + "\n");
+                     sb.append("oldReceipt: " + validationResult.oldReceipt + "\n");
                      sb.append("receiptTotalFound: " + validationResult.receiptTotalFound + "\n");
 
                      Log.i(TAG, sb.toString());
