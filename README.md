@@ -230,6 +230,8 @@ if (ReceiptScanner.getPreValidationStatus(getContext()) != ValidationStatus.NOT_
                      sb.append("retailerFound: " + validationResult.retailerFound + "\n");
                      sb.append("dateFound: " + validationResult.dateFound + "\n");
                      sb.append("timeFound: " + validationResult.timeFound + "\n");
+                     sb.append("isDuplicate: " + validationResult.isDuplicate + "\n");
+                     sb.append("oldReceipt: " + validationResult.oldReceipt + "\n");
                      sb.append("receiptTotalFound: " + validationResult.receiptTotalFound + "\n");
 
                      Log.i(TAG, sb.toString());
