@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.example.receiptScannerAndroidDemo.ScannerActivity;
 import com.example.receiptScannerAndroidDemo.config.Config;
 import com.example.receiptScannerAndroidDemo.databinding.FragmentScannerPreviewBinding;
 import com.ourcart.receiptscanner.ReceiptScanner;
@@ -43,6 +44,7 @@ import com.ourcart.receiptscanner.utils.ImageEdgeDetector;
 import com.ourcart.receiptscanner.utils.ImageValidator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +55,7 @@ import java.util.Set;
 public class ScannerPreviewFragment extends Fragment {
 
     public static Uri pdfUri = null;
-    public static List<Bitmap> bitmaps;
+    public static List<Bitmap> bitmaps = new ArrayList<>();
     private final String[] MIMES = new String[] {
             "application/pdf",
             "application/x-pdf",
@@ -99,7 +101,7 @@ public class ScannerPreviewFragment extends Fragment {
         });
 
         binding.findCropPointsBtn.setOnClickListener(v -> {
-            if (!bitmaps.isEmpty()) {
+            if (bitmaps != null && !bitmaps.isEmpty()) {
                 binding.findCropPointsBtn.setEnabled(false);
                 ReceiptScanner.getEdgePointsData(bitmaps).thenAccept(edgeData -> {
                     LinearLayout previewScroll = binding.previewScroll;
@@ -192,7 +194,7 @@ public class ScannerPreviewFragment extends Fragment {
                     Toast.makeText(getContext(), "Other error", Toast.LENGTH_LONG).show();
                 }
             }
-            if (!bitmaps.isEmpty()) {
+            if (bitmaps != null && !bitmaps.isEmpty()) {
                 v.setEnabled(false);
                 ReceiptScanner.validateReceipt(getContext(), bitmaps)
                         .thenAccept((results) -> {
@@ -209,9 +211,15 @@ public class ScannerPreviewFragment extends Fragment {
         apiConfig.clientCountry = Config.COUNTRY_CODE;
         apiConfig.clientCode = Config.CLIENT_CODE;
         apiConfig.clientUserId = Config.CLIENT_USER_ID;
+        apiConfig.campaignIds = ScannerActivity.campaignIds;
 
         binding.cropBtn.setOnClickListener(v -> {
-            if (!bitmaps.isEmpty()) {
+            // Check if fragment is attached
+            if (getContext() == null || getActivity() == null) {
+                return;
+            }
+
+            if (bitmaps != null && !bitmaps.isEmpty()) {
                 v.setEnabled(false);
                 Log.d("CropButton", "Starting crop operation for " + bitmaps.size() + " images");
 
@@ -254,36 +262,19 @@ public class ScannerPreviewFragment extends Fragment {
                             (cropPointsView.borderPoints != null ? cropPointsView.borderPoints.size() : "null"));
 
                         if (cropPointsView.borderPoints != null && cropPointsView.borderPoints.size() >= 4) {
-                            // Convert the points to the format expected by cropBitmap
+                            // Convert the points back to original bitmap coordinates
                             Map<Integer, PointF> cropPoints = new HashMap<>();
                             float ratio = (float) cropPointsView.getWidth() / bitmaps.get(i).getWidth();
                             Log.d("CropButton", "Image " + i + " ratio: " + ratio + ", view width: " + cropPointsView.getWidth() + ", bitmap width: " + bitmaps.get(i).getWidth());
 
-                            // Try clockwise order: top-left, top-right, bottom-right, bottom-left
-                            // cropBitmap might expect: 1=top-left, 2=top-right, 3=bottom-right, 4=bottom-left
-                            if (cropPointsView.borderPoints.containsKey(0)) { // top-left
-                                PointF point = cropPointsView.borderPoints.get(0);
-                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
-                                cropPoints.put(1, originalPoint);
-                                Log.d("CropButton", "Mapped top-left: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
-                            }
-                            if (cropPointsView.borderPoints.containsKey(1)) { // top-right
-                                PointF point = cropPointsView.borderPoints.get(1);
-                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
-                                cropPoints.put(2, originalPoint);
-                                Log.d("CropButton", "Mapped top-right: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
-                            }
-                            if (cropPointsView.borderPoints.containsKey(3)) { // bottom-right (swap with bottom-left)
-                                PointF point = cropPointsView.borderPoints.get(3);
-                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
-                                cropPoints.put(3, originalPoint);
-                                Log.d("CropButton", "Mapped bottom-right: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
-                            }
-                            if (cropPointsView.borderPoints.containsKey(2)) { // bottom-left (swap with bottom-right)
-                                PointF point = cropPointsView.borderPoints.get(2);
-                                PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
-                                cropPoints.put(4, originalPoint);
-                                Log.d("CropButton", "Mapped bottom-left: (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
+                            // Keep the same keys (0,1,2,3) as edge detection since SDK expects this format
+                            for (Map.Entry<Integer, PointF> entry : cropPointsView.borderPoints.entrySet()) {
+                                PointF point = entry.getValue();
+                                if (point != null) {
+                                    PointF originalPoint = new PointF(point.x / ratio, point.y / ratio);
+                                    cropPoints.put(entry.getKey(), originalPoint);
+                                    Log.d("CropButton", "Mapped key " + entry.getKey() + ": (" + point.x + "," + point.y + ") -> (" + originalPoint.x + "," + originalPoint.y + ")");
+                                }
                             }
 
                             // Only crop if we have all 4 points
@@ -305,8 +296,8 @@ public class ScannerPreviewFragment extends Fragment {
                                     }
                                 }
 
-                                // Validate that we have exactly keys 1,2,3,4 with non-null points
-                                for (int key = 1; key <= 4; key++) {
+                                // Validate that we have exactly keys 0,1,2,3 with non-null points
+                                for (int key = 0; key <= 3; key++) {
                                     if (!cropPoints.containsKey(key) || cropPoints.get(key) == null) {
                                         Log.e("CropButton", "Missing or null point for key " + key);
                                         allPointsValid = false;
@@ -322,22 +313,42 @@ public class ScannerPreviewFragment extends Fragment {
                                 Map<Integer, PointF> safeCropPoints = new HashMap<>();
                                 for (Map.Entry<Integer, PointF> entry : cropPoints.entrySet()) {
                                     PointF originalPoint = entry.getValue();
-                                    safeCropPoints.put(entry.getKey(), new PointF(originalPoint.x, originalPoint.y));
+                                    if (originalPoint != null) {
+                                        safeCropPoints.put(entry.getKey(), new PointF(originalPoint.x, originalPoint.y));
+                                        Log.d("CropButton", "Added safe point " + entry.getKey() + ": (" + originalPoint.x + "," + originalPoint.y + ")");
+                                    } else {
+                                        Log.e("CropButton", "Null point found at key " + entry.getKey());
+                                    }
                                 }
 
-                                Log.d("CropButton", "Created safe cropPoints map with fresh PointF objects");
+                                Log.d("CropButton", "Created safe cropPoints map with " + safeCropPoints.size() + " points");
 
-
-                                try {
-                                    Bitmap croppedBitmap = ReceiptScanner.cropBitmap(bitmaps.get(i), safeCropPoints);
-                                    if (croppedBitmap != null) {
-                                        Log.d("CropButton", "Successfully cropped image " + i + " to size: " + croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
-                                        bitmaps.set(i, croppedBitmap);
+                                // Final validation before calling SDK
+                                boolean readyToCrop = safeCropPoints.size() == 4;
+                                for (int key = 0; key <= 3; key++) {
+                                    PointF point = safeCropPoints.get(key);
+                                    if (point == null) {
+                                        Log.e("CropButton", "Final validation failed: key " + key + " is null");
+                                        readyToCrop = false;
                                     } else {
-                                        Log.e("CropButton", "Failed to crop image " + i + " - cropBitmap returned null");
+                                        Log.d("CropButton", "Final validation: key " + key + " = (" + point.x + "," + point.y + ")");
                                     }
-                                } catch (Exception cropException) {
-                                    Log.e("CropButton", "Exception during cropBitmap for image " + i + ": " + cropException.getMessage(), cropException);
+                                }
+
+                                if (readyToCrop) {
+                                    try {
+                                        Bitmap croppedBitmap = ReceiptScanner.cropBitmap(bitmaps.get(i), safeCropPoints);
+                                        if (croppedBitmap != null) {
+                                            Log.d("CropButton", "Successfully cropped image " + i + " to size: " + croppedBitmap.getWidth() + "x" + croppedBitmap.getHeight());
+                                            bitmaps.set(i, croppedBitmap);
+                                        } else {
+                                            Log.e("CropButton", "Failed to crop image " + i + " - cropBitmap returned null");
+                                        }
+                                    } catch (Exception cropException) {
+                                        Log.e("CropButton", "Exception during cropBitmap for image " + i + ": " + cropException.getMessage(), cropException);
+                                    }
+                                } else {
+                                    Log.e("CropButton", "Skipping crop for image " + i + " - final validation failed");
                                 }
                             } else {
                                 Log.w("CropButton", "Skipping crop for image " + i + " - only have " + cropPoints.size() + " points instead of 4");
@@ -363,48 +374,80 @@ public class ScannerPreviewFragment extends Fragment {
         });
 
         binding.sendBtn.setOnClickListener(v -> {
+            // Check if fragment is attached
+            if (getContext() == null || getActivity() == null) {
+                return;
+            }
+
             if (pdfUri != null) {
                 v.setEnabled(false);
                 try {
                     ReceiptScanner.sendReceipt(getContext(), pdfUri, apiConfig).thenAccept(edgeData -> {
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Receipt sended", Toast.LENGTH_LONG).show();
-                            v.setEnabled(true);
-                        });
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(() -> {
+                                Context context = getContext();
+                                if (context != null) {
+                                    Toast.makeText(context, "Receipt sent", Toast.LENGTH_LONG).show();
+                                }
+                                v.setEnabled(true);
+                            });
+                        }
                     }).exceptionally((e) -> {
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            v.setEnabled(true);
-                        });
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(() -> {
+                                Context context = getContext();
+                                if (context != null) {
+                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                                v.setEnabled(true);
+                            });
+                        }
                         return null;
                     });
                 } catch (FileService.FileTypeException e) {
-                    throw new RuntimeException(e);
+                    v.setEnabled(true);
+                    Toast.makeText(getContext(), "Invalid file type", Toast.LENGTH_LONG).show();
                 } catch (FileService.FileSizeException e) {
-                    throw new RuntimeException(e);
+                    v.setEnabled(true);
+                    Toast.makeText(getContext(), "File too large", Toast.LENGTH_LONG).show();
                 } catch (ReceiptScanner.MissingConfigException e) {
-                    throw new RuntimeException(e);
+                    v.setEnabled(true);
+                    Toast.makeText(getContext(), "Missing API configuration", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
-            if (!bitmaps.isEmpty()) {
+            if (bitmaps != null && !bitmaps.isEmpty()) {
                 v.setEnabled(false);
                 try {
                     ReceiptScanner.sendReceipt(bitmaps, apiConfig).thenAccept(edgeData -> {
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Receipt sended", Toast.LENGTH_LONG).show();
-                            v.setEnabled(true);
-                        });
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(() -> {
+                                Context context = getContext();
+                                if (context != null) {
+                                    Toast.makeText(context, "Receipt sent", Toast.LENGTH_LONG).show();
+                                }
+                                v.setEnabled(true);
+                            });
+                        }
                     }).exceptionally((e) -> {
-
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            v.setEnabled(true);
-                        });
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            activity.runOnUiThread(() -> {
+                                Context context = getContext();
+                                if (context != null) {
+                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                                v.setEnabled(true);
+                            });
+                        }
                         return null;
                     });
                 } catch (ReceiptScanner.MissingConfigException e) {
-                    throw new RuntimeException(e);
+                    v.setEnabled(true);
+                    Toast.makeText(getContext(), "Missing API configuration", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -423,8 +466,8 @@ public class ScannerPreviewFragment extends Fragment {
             binding.pdfLoaded.setVisibility(View.VISIBLE);
             return;
         }
-        Log.e("TAG", "2: bitmaps: " + bitmaps.size());
-        if (!bitmaps.isEmpty()) {
+        Log.e("TAG", "2: bitmaps: " + (bitmaps != null ? bitmaps.size() : "null"));
+        if (bitmaps != null && !bitmaps.isEmpty()) {
             binding.findCropPointsBtn.setEnabled(true);
             binding.cropBtn.setEnabled(false);
             binding.optionContainer.setVisibility(View.VISIBLE);
@@ -600,15 +643,30 @@ public class ScannerPreviewFragment extends Fragment {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            canvas.drawLine(borderPoints.get(0).x, borderPoints.get(0).y, borderPoints.get(1).x, borderPoints.get(1).y, mPaint);
-            canvas.drawLine(borderPoints.get(0).x, borderPoints.get(0).y, borderPoints.get(2).x, borderPoints.get(2).y, mPaint);
-            canvas.drawLine(borderPoints.get(3).x, borderPoints.get(3).y, borderPoints.get(1).x, borderPoints.get(1).y, mPaint);
-            canvas.drawLine(borderPoints.get(3).x, borderPoints.get(3).y, borderPoints.get(2).x, borderPoints.get(2).y, mPaint);
+            // Check if all required points are available
+            if (borderPoints == null || borderPoints.size() < 4) {
+                return;
+            }
 
-            canvas.drawCircle(borderPoints.get(0).x, borderPoints.get(0).y, 20, mPaint);
-            canvas.drawCircle(borderPoints.get(1).x, borderPoints.get(1).y, 20, mPaint);
-            canvas.drawCircle(borderPoints.get(2).x, borderPoints.get(2).y, 20, mPaint);
-            canvas.drawCircle(borderPoints.get(3).x, borderPoints.get(3).y, 20, mPaint);
+            PointF point0 = borderPoints.get(0);
+            PointF point1 = borderPoints.get(1);
+            PointF point2 = borderPoints.get(2);
+            PointF point3 = borderPoints.get(3);
+
+            // Verify all points are non-null before drawing
+            if (point0 == null || point1 == null || point2 == null || point3 == null) {
+                return;
+            }
+
+            canvas.drawLine(point0.x, point0.y, point1.x, point1.y, mPaint);
+            canvas.drawLine(point0.x, point0.y, point2.x, point2.y, mPaint);
+            canvas.drawLine(point3.x, point3.y, point1.x, point1.y, mPaint);
+            canvas.drawLine(point3.x, point3.y, point2.x, point2.y, mPaint);
+
+            canvas.drawCircle(point0.x, point0.y, 20, mPaint);
+            canvas.drawCircle(point1.x, point1.y, 20, mPaint);
+            canvas.drawCircle(point2.x, point2.y, 20, mPaint);
+            canvas.drawCircle(point3.x, point3.y, 20, mPaint);
         }
     }
 }

@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/9fa77060-1a6a-497a-992e-61d4ec5dc64b
 
 Add to your `build.gradle.kts` dependencies:
 ```agsl
-implementation("com.ourcart:receiptscanner:1.8.4")
+implementation("com.ourcart:receiptscanner:1.14.0")
 ```
 
 Add in settings.gradle.kts new maven repository:
@@ -309,8 +309,9 @@ apiConfig.apiKey = Config.API_KEY;
 apiConfig.clientCountry = Config.COUNTRY_CODE;
 apiConfig.clientCode = Config.CLIENT_CODE;
 apiConfig.clientUserId = Config.CLIENT_USER_ID;
+apiConfig.campaignIds = Arrays.asList("YOUR_CAMPAIGN_ID"); // Optional
 ```
-- ### **isProd** (_boolean_) 
+- ### **isProd** (_boolean_)
   determine should be send to production or staging environment.
 - ### **apiKey** (_string_)
   string for Ourcart requests, must match country, environment, and clientCode, provided to you by Ourcart
@@ -320,6 +321,8 @@ apiConfig.clientUserId = Config.CLIENT_USER_ID;
   client code for Ourcart requests, provided to you by Ourcart
 - ### **clientUserId** (_string_)
   id of client to be sent and associated with receipts, it can be any string but have it be a real string associated with currently logged in user, it will help us block fraudulent users and will provide consistent data.
+- ### **campaignIds** (_List&lt;String>_)(_Optional_)
+  list of campaign IDs to associate with the receipt upload. If provided, they will be sent to the backend as `campaign-ids`.
 
 ## ScannerConfig documentation
 ⚙️ `ScannerConfig` instance of this class must me provided to handle user interactions and output from scanner Activity.
@@ -613,3 +616,15 @@ All texts with default values in xml format:
 #### In the text there are tags similar to html ones:
 - `<b>` - make the text bold, also add attribute to string `formatted="false"` may not work without it
 - `<u>` - add underline to text
+
+---
+
+## 📋 Release Notes
+
+| Version | Changes |
+|---------|---------|
+| **1.14.0** | [Prevalidation of duplicates and old receipts](#-validation-of-receipts), [Campaign IDs support](#apiconfig-documentation) |
+| **1.13.1** | Bug fixes |
+| **1.13.0** | Long receipt detection |
+| **1.12.0** | Edge detection & cropping |
+| **1.11.0** | Initial public release |

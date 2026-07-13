@@ -79,6 +79,36 @@
     </LinearLayout>
 
 
+    <LinearLayout
+        android:id="@+id/campaign_ids_wrapper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_wrapper">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Campaign IDs:"
+            android:paddingEnd="8dp" />
+
+        <EditText
+            android:id="@+id/campaign_ids_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="comma-separated IDs"
+            android:inputType="text"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout5"
         android:layout_width="match_parent"
@@ -87,7 +117,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_wrapper">
+        app:layout_constraintTop_toBottomOf="@+id/campaign_ids_wrapper">
 
 
         <androidx.fragment.app.FragmentContainerView

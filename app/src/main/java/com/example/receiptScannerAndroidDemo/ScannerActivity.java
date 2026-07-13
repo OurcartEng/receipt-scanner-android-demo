@@ -14,8 +14,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.receiptScannerAndroidDemo.config.Config;
@@ -23,6 +26,7 @@ import com.example.receiptScannerAndroidDemo.scanner.ScannerPreviewFragment;
 import com.ourcart.receiptscanner.ReceiptScanner;
 import com.ourcart.receiptscanner.enums.ScannerEvent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +50,7 @@ public class ScannerActivity extends AppCompatActivity {
 
     public static ReceiptScanner.UISettings uiSettings = new ReceiptScanner.UISettings();
     public static ReceiptScanner.ScannerConfig scannerConfig;
+    public static List<String> campaignIds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,25 @@ public class ScannerActivity extends AppCompatActivity {
 
         Button configBtn = findViewById(R.id.config_btn);
         Button previewBtn = findViewById(R.id.preview_btn);
+
+        EditText campaignIdsInput = findViewById(R.id.campaign_ids_input);
+        campaignIdsInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                campaignIds.clear();
+                for (String id : s.toString().split(",")) {
+                    String trimmed = id.trim();
+                    if (!trimmed.isEmpty()) {
+                        campaignIds.add(trimmed);
+                    }
+                }
+                if (scannerConfig != null) {
+                    scannerConfig.campaignIds = new ArrayList<>(campaignIds);
+                }
+            }
+        });
 
         Button csvImportButton = findViewById(R.id.csv_import_btn);
         csvImportButton.setOnClickListener(v -> {
@@ -109,6 +133,7 @@ public class ScannerActivity extends AppCompatActivity {
             scannerConfig.clientCountry = Config.COUNTRY_CODE;
             scannerConfig.clientCode = Config.CLIENT_CODE;
             scannerConfig.clientUserId = Config.CLIENT_USER_ID;
+            scannerConfig.campaignIds = campaignIds;
         }
 
 
